@@ -7,11 +7,19 @@ on:
     - cron: '0 0 */15 * *'
 jobs:
   build:
-    name: latest
-    runs-on: ubuntu-latest
+    name: ubuntu-18.04
+    runs-on: ubuntu-18.04
     steps:
      - uses: actions/checkout@v1
      - name: Build Docker image
        run: |
-        ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" BSP_BUILD="yes" REPOSITORY_INSTALL="u-boot,kernel,armbian-zsh,armbian-config,armbian-firmware" IGNORE_UPDATES="yes"
+        ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"
+  build:
+   name: ubuntu-20.04
+    runs-on: ubuntu-20.04
+    steps:
+     - uses: actions/checkout@v1
+     - name: Build Docker image
+       run: |
+        ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"          
 
