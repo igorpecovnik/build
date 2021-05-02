@@ -7,7 +7,7 @@ on:
     - cron: '0 0 */15 * *'
 jobs:
   build_on_bionic:
-    name: Build test on Ubuntu Bionic
+    name: Build under Docker on Bionic
     runs-on: ubuntu-18.04
     steps:
      - uses: actions/checkout@v1
@@ -15,7 +15,7 @@ jobs:
        run: |
         ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"
   build_on_focal:
-    name: Build test on Ubuntu Focal
+    name: Build under Docker on Focal
     runs-on: ubuntu-20.04
     steps:
      - uses: actions/checkout@v1
