@@ -12,6 +12,7 @@ jobs:
     steps:
      - uses: actions/checkout@v1
      - name: Build Docker image
+       shell: bash {0}
        run: |
 	sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
 	touch .ignore_changes
@@ -22,6 +23,7 @@ jobs:
     steps:
      - uses: actions/checkout@v1
      - name: Build Docker image
+       shell: bash {0}
        run: |
         sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
         touch .ignore_changes
