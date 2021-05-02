@@ -15,7 +15,7 @@ jobs:
        run: |
         ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"
   build:
-   name: ubuntu2
+    name: ubuntu2
     runs-on: ubuntu-20.04
     steps:
      - uses: actions/checkout@v1
