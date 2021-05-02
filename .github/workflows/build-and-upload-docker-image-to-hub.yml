@@ -15,7 +15,7 @@ jobs:
        run: |
         echo "action_state=yellow" >> $GITHUB_ENV
         ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes"
-        echo "${{ env.action_state }}"
+        echo $?
   build_on_focal:
     name: Build under Docker on Focal
     runs-on: ubuntu-20.04
@@ -24,3 +24,4 @@ jobs:
      - name: Build Docker image
        run: |
         ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes"
+        echo $?
