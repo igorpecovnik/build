@@ -7,7 +7,7 @@ on:
     - cron: '0 0 */15 * *'
 jobs:
   build:
-    name: ubuntu-18.04
+    name: ubuntu1
     runs-on: ubuntu-18.04
     steps:
      - uses: actions/checkout@v1
@@ -15,7 +15,7 @@ jobs:
        run: |
         ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"
   build:
-   name: ubuntu-20.04
+   name: ubuntu2
     runs-on: ubuntu-20.04
     steps:
      - uses: actions/checkout@v1
