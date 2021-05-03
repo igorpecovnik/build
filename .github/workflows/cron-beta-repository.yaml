@@ -11,7 +11,7 @@ jobs:
       - name: Run script
         shell: bash {0}
         run: |
-          echo "test1"
+          echo "test"
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
