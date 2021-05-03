@@ -1,4 +1,4 @@
-name: Build
+name: Armbian CI
 on:
   push:
     branches: master
@@ -6,9 +6,29 @@ on:
     - cron:  '0 */3 * * *'
 jobs:
   build: 
-    runs-on: [desktop]
+    runs-on: [self-hosted, Linux, x64]
     steps:
       - name: Run script
         shell: bash {0}
         run: |
-          run-one ./beta-repository.sh
+          echo "test1"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: armbian/build
+          path: build
+          ref: nightly
+          clean: false
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: armbian/scripts
+          token: ${{ secrets.PAT }}
+          path: scripts
+          clean: false
+      - name: Display environment
+        shell: bash {0}
+        run: |
+          echo "BLTPATH=\"$(pwd)/build/\"" > scripts/cacherebuild.conf
+          touch .ignore_changes
+          run-one scripts/cacherebuild.conf 
