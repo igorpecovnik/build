@@ -30,6 +30,9 @@ jobs:
         shell: bash {0}
         run: |
           echo "BLTPATH=\"$(pwd)/build/\"" > scripts/cacherebuild.conf
-          touch .ignore_changes
+          #touch .ignore_changes
+          cd build
+          pwd
+          cd
           cd scripts
-          run-one ./cacherebuild.sh
+          #run-one ./cacherebuild.sh
