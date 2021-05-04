@@ -37,5 +37,4 @@ jobs:
           fi
           cd ..
           cd scripts
-          pwd
-          #run-one ./cacherebuild.sh
+          run-one ./cacherebuild.sh
