@@ -26,7 +26,7 @@ jobs:
           token: ${{ secrets.PAT }}
           path: scripts
           clean: false
-      - name: Display environment
+      - name: Rebuild cache
         shell: bash {0}
         run: |
           echo "BLTPATH=\"$(pwd)/build/\"" > scripts/cacherebuild.conf
