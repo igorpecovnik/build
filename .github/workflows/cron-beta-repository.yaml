@@ -29,8 +29,12 @@ jobs:
       - name: Display environment
         shell: bash {0}
         run: |
+          pwd
           echo "BLTPATH=\"$(pwd)/build/\"" > scripts/cacherebuild.conf
-          #touch .ignore_changes
+          if [[ ! -f .ignore_changes ]]; then
+          ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
+          touch .ignore_changes
+          fi
           cd build
           pwd
           cd
