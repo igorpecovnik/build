@@ -19,7 +19,8 @@ jobs:
           path: build
           ref: nightly
           clean: false
-      - uses: actions/checkout@v2
+      - name: Checkout scripts
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           repository: armbian/scripts
