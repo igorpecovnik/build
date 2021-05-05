@@ -47,4 +47,6 @@ jobs:
         - name: Run script
           shell: bash {0}
           run: |
+            cd build
+            git remote set-url origin git@github.com:armbian/build.git
             echo "xxxx"
