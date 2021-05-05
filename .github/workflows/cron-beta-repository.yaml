@@ -1,4 +1,4 @@
-name: Armbian CI
+name: Armbian CI Pro
 on:
   push:
     branches: master
