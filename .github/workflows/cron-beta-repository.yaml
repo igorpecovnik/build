@@ -37,6 +37,7 @@ jobs:
                ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
                touch .ignore_changes
             fi
+            cp ../scripts/configs/* userpatches/
             cd ..
             cd scripts
             run-one ./cacherebuild.sh
