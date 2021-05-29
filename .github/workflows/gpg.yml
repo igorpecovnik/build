@@ -24,8 +24,7 @@ jobs:
         env:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
         run: |          
-          find * -type f | parallel 'echo  | gpg $PASSPHRASE --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
-          echo 111foo >> bar.txt
+          echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSION
           git add .
           git commit -m "This is commit"
           git push
