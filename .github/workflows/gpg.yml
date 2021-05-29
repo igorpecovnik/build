@@ -19,6 +19,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           git-user-signingkey: true
           git-commit-gpgsign: true
+          git-committer-email: igor.pecovnik@gmail.com
       -
         name: Sign commit and push changes
         run: |
