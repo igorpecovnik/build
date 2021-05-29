@@ -21,8 +21,12 @@ jobs:
           git-commit-gpgsign: true
       -
         name: Sign commit and push changes
+        env:
+          PASSPHRASE: ${{ secrets.PASSPHRASE }}
         run: |
+          cd cache/rootfs
+          find *.lz4 -type f | parallel 'echo  | gpg $PASSPHRASE --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
           echo 111foo >> bar.txt
           git add .
-          git commit -S -m "This commit is signed!"
+          git commit -m "This is commit"
           git push
