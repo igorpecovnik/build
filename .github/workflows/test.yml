@@ -67,10 +67,10 @@ jobs:
             cd scripts
             run-one ./betarepository.sh
     sign:
-      name:
+      name: Sign
       needs: cache
       runs-on: [self-hosted, Linux, x64]
-      stepa:
+      steps:
         - 
         name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v3
