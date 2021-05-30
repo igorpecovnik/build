@@ -86,11 +86,12 @@ jobs:
           name: Sign commit and push changes
           env:
             PASSPHRASE: ${{ secrets.PASSPHRASE }}
-          run: |          
+          run: |      
+            cd build
             echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSION
     finish:
       name: 4. Cleaning
-      needs: [docker, cache, kernels]
+      needs: [docker, cache, kernels,sign]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
