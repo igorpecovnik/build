@@ -24,28 +24,29 @@ jobs:
             token: ${{ secrets.PAT }}
             path: scripts
             clean: false
-    parallel:
+    common:
       needs: prepare
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - run: |
+            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
+            sudo cp ../scripts/configs/* userpatches/
+            sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+    parallel:
+      needs: common
       runs-on: [self-hosted, Linux, x64]
       strategy:
         matrix:
           run: ['Rootfs cache rebuild', 'run2']
       steps:
         - run: |
-            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
-            cd build
-            if [[ ! -f .ignore_changes ]]; then
-               ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
-               sudo touch .ignore_changes
-            fi
-            sudo cp ../scripts/configs/* userpatches/
-            cd ..
             cd scripts
             run-one ./cacherebuild.sh
         - run: |
-           cd build
-           sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
-           sudo touch .ignore_changes
+            cd build
            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
     finish:
       needs: parallel
