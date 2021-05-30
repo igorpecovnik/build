@@ -30,7 +30,8 @@ jobs:
         matrix:
           run: ['Rootfs cache rebuild', 'run2']
       steps:
-          run: |
+        - name: Rebuild cache
+        - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
             if [[ ! -f .ignore_changes ]]; then
