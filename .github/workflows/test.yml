@@ -47,7 +47,7 @@ jobs:
             run-one ./cacherebuild.sh
         - run: |
             cd build
-           ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
     finish:
       needs: parallel
       runs-on: [self-hosted, Linux, x64]
