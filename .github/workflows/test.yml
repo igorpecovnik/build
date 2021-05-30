@@ -44,8 +44,7 @@ jobs:
       steps:
         - run: |
             cd scripts
-            echo "cache"
-            #run-one ./cacherebuild.sh
+            run-one ./cacherebuild.sh
     cache:
       name: 3.2 Create docker image
       needs: common
@@ -53,7 +52,7 @@ jobs:
       steps:
         - run: |
             cd build
-            ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
+            run-one ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
             docker tag armbian:$(cat VERSION) armbian/build:latest
     kernels:
       name: 3.3 Build changed kernels
