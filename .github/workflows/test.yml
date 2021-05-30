@@ -44,7 +44,8 @@ jobs:
       steps:
         - run: |
             cd scripts
-            run-one ./cacherebuild.sh
+            echo "cache"
+            #run-one ./cacherebuild.sh
         - run: |
             cd build
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
