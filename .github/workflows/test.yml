@@ -44,7 +44,7 @@ jobs:
       steps:
         - run: |
             cd scripts
-            run-one ./cacherebuild.sh
+            #run-one ./cacherebuild.sh
     cache:
       name: Create docker image
       needs: common
