@@ -7,11 +7,6 @@ on:
 jobs:
     prepare:
       runs-on: [self-hosted, Linux, x64]
-      strategy:
-        matrix: 
-          run: ['run1', 'run2']
-      steps:
-        - run: echo Run ${{ matrix.run }}
         - name: Checkout Armbian build script
           uses: actions/checkout@v2
           with:
@@ -20,7 +15,6 @@ jobs:
             path: build
             ref: nightly
             clean: false
-        - run: echo Run ${{ matrix.run }}
         - name: Checkout Armbian support scripts
           uses: actions/checkout@v2
           with:
@@ -29,8 +23,14 @@ jobs:
             token: ${{ secrets.PAT }}
             path: scripts
             clean: false
-         
-    build:
+    parallel:
+      strategy:
+        matrix:
+          run: ['run1', 'run2']
+      steps:
+        - run: echo Run ${{ matrix.run }}
+        - run: echo Run ${{ matrix.run }}
+    finish:
       needs: prepare
       runs-on: [self-hosted, Linux, x64]
       steps:
