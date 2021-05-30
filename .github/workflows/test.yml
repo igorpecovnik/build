@@ -37,6 +37,7 @@ jobs:
             ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
             sudo cp ../scripts/configs/* userpatches/
             sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            [[ -z $(mount | grep hash-beta) ]] && sudo mount ../scripts/hash-beta cache/hash-beta --bind
     docker:
       name: Create rootfs cache
       needs: common
@@ -46,7 +47,7 @@ jobs:
             cd scripts
             run-one ./cacherebuild.sh
     cache:
-      name: Create docker image / GH runner
+      name: Create docker image @ Ubuntu Focal
       needs: common
       runs-on: ubuntu-latest
       steps:
