@@ -1,0 +1,39 @@
+name: Armbian CI Pro
+on:
+  push:
+    branches: master
+  schedule:
+    - cron:  '0 */3 * * *'
+jobs:
+    prepare:
+      runs-on: [self-hosted, Linux, x64]
+      strategy:
+        matrix: 
+          run: ['run1', 'run2']
+      steps:
+        - run
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+        - run
+        - name: Checkout Armbian support scripts
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/scripts
+            token: ${{ secrets.PAT }}
+            path: scripts
+            clean: false
+    build:
+      needs: prepare
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Run script
+          shell: bash {0}
+          run: |
+            echo "xxxx"
