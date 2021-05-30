@@ -1,4 +1,4 @@
-name: Armbian CI Pro
+name: CI
 on:
   push:
     branches: master
@@ -6,6 +6,7 @@ on:
     - cron:  '0 */3 * * *'
 jobs:
     prepare:
+      name: Prepare host
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Checkout Armbian build script
@@ -25,6 +26,7 @@ jobs:
             path: scripts
             clean: false
     common:
+      name: Prepare scripts
       needs: prepare
       runs-on: [self-hosted, Linux, x64]
       steps:
@@ -35,22 +37,25 @@ jobs:
             ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
             sudo cp ../scripts/configs/* userpatches/
             sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
-    parallel:
+    docker:
+      name: Create docker image
       needs: common
       runs-on: [self-hosted, Linux, x64]
-      strategy:
-        matrix:
-          run: ['Rootfs cache rebuild', 'run2']
       steps:
         - run: |
             cd scripts
             echo "cache"
             #run-one ./cacherebuild.sh
+    cache:
+      name: Create rootfs cache
+      needs: common
+      runs-on: [self-hosted, Linux, x64]
+      steps:
         - run: |
             cd build
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
     finish:
-      needs: parallel
+      needs: docker,cache
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
