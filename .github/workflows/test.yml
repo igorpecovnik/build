@@ -44,7 +44,7 @@ jobs:
       steps:
         - run: |
             cd scripts
-            #run-one ./cacherebuild.sh
+            run-one ./cacherebuild.sh
     cache:
       name: Create docker image
       needs: common
@@ -52,8 +52,9 @@ jobs:
       steps:
         - uses: actions/checkout@v1      
         - run: |
-            cd build
-            run-one ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
+            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            touch .ignore_changes
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
             docker tag armbian:$(cat VERSION) armbian/build:latest
     kernels:
       name: Build changed kernels
