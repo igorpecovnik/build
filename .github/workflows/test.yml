@@ -12,8 +12,8 @@ jobs:
           run: ['run1', 'run2']
       steps:
         - name: Checkout Armbian build script
-          uses: actions/checkout@v2
         - run: echo Run ${{ matrix.run }}
+          uses: actions/checkout@v2
           with:
             fetch-depth: 0
             repository: armbian/build
@@ -21,8 +21,8 @@ jobs:
             ref: nightly
             clean: false
         - name: Checkout Armbian support scripts
-          uses: actions/checkout@v2
         - run: echo Run ${{ matrix.run }}
+          uses: actions/checkout@v2
           with:
             fetch-depth: 0
             repository: armbian/scripts
