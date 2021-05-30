@@ -87,7 +87,7 @@ jobs:
           env:
             PASSPHRASE: ${{ secrets.PASSPHRASE }}
           run: |          
-            echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSIO
+            echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSION
     finish:
       name: 4. Cleaning
       needs: [docker, cache, kernels]
