@@ -40,7 +40,7 @@ jobs:
             cp ../scripts/configs/* userpatches/ \
             cd .. \
             cd scripts \
-            run-one ./cacherebuild.sh \
+            run-one ./cacherebuild.sh
         - run: echo Run ${{ matrix.run }}
     finish:
       needs: prepare
