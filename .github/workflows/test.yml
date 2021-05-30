@@ -6,7 +6,7 @@ on:
     - cron:  '0 */3 * * *'
 jobs:
     prepare:
-      name: 1. Prepare host
+      name: Prepare host
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Checkout Armbian build script
@@ -26,7 +26,7 @@ jobs:
             path: scripts
             clean: false
     common:
-      name: 2. Prepare scripts
+      name: Prepare scripts
       needs: prepare
       runs-on: [self-hosted, Linux, x64]
       steps:
@@ -46,7 +46,7 @@ jobs:
             cd scripts
             run-one ./cacherebuild.sh
     cache:
-      name: Create docker image
+      name: Create docker image / GH runner
       needs: common
       runs-on: ubuntu-latest
       steps:
@@ -54,7 +54,7 @@ jobs:
         - run: |
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             docker tag armbian:$(cat VERSION) armbian/build:latest
     kernels:
       name: Build changed kernels
