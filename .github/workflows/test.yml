@@ -25,6 +25,7 @@ jobs:
             path: scripts
             clean: false
     parallel:
+      runs-on: [self-hosted, Linux, x64]
       strategy:
         matrix:
           run: ['run1', 'run2']
