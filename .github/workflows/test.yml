@@ -25,6 +25,7 @@ jobs:
             path: scripts
             clean: false
     parallel:
+      needs: prepare
       runs-on: [self-hosted, Linux, x64]
       strategy:
         matrix:
@@ -43,7 +44,7 @@ jobs:
             run-one ./cacherebuild.sh
         - run: echo Run ${{ matrix.run }}
     finish:
-      needs: prepare
+      needs: parallel
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
