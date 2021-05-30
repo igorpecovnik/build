@@ -72,19 +72,19 @@ jobs:
       runs-on: [self-hosted, Linux, x64]
       steps:
         - 
-        name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v3
-        with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          git-user-signingkey: true
-          git-commit-gpgsign: true
+          name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            git-user-signingkey: true
+            git-commit-gpgsign: true
         -
-        name: Sign commit and push changes
-        env:
-          PASSPHRASE: ${{ secrets.PASSPHRASE }}
-        run: |          
-          echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSIO
+          name: Sign commit and push changes
+          env:
+            PASSPHRASE: ${{ secrets.PASSPHRASE }}
+          run: |          
+            echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSIO
     finish:
       name: 4. Cleaning
       needs: [docker, cache, kernels]
