@@ -6,7 +6,7 @@ on:
     - cron:  '0 */3 * * *'
 jobs:
     prepare:
-      name: Prepare host
+      name: Prepare build host
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Checkout Armbian build script
