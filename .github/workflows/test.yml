@@ -42,7 +42,11 @@ jobs:
             cd ..
             cd scripts
             run-one ./cacherebuild.sh
-        - run: echo Run ${{ matrix.run }}
+        - run: |
+           cd build
+           sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+           sudo touch .ignore_changes
+           ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
     finish:
       needs: parallel
       runs-on: [self-hosted, Linux, x64]
