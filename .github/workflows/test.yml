@@ -39,7 +39,7 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             #[[ -z $(mount | grep hash-beta) ]] && sudo mount ../scripts/hash-beta cache/hash-beta --bind
-    docker:
+    cache:
       name: Create rootfs cache
       needs: common
       runs-on: [self-hosted, Linux, x64]
@@ -47,7 +47,7 @@ jobs:
         - run: |
             cd scripts
             run-one ./cacherebuild.sh
-    cache:
+    docker:
       name: Create docker image @ Ubuntu Focal
       needs: common
       runs-on: ubuntu-latest
@@ -71,14 +71,17 @@ jobs:
       needs: cache
       runs-on: [self-hosted, Linux, x64]
       steps:
+        -
+          run: |
+            cd build
         - 
           name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
-            git-user-signingkey: true
-            git-commit-gpgsign: true
+            #git-user-signingkey: true
+            #git-commit-gpgsign: true
         -
           name: Sign commit and push changes
           env:
