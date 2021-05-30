@@ -48,8 +48,9 @@ jobs:
     cache:
       name: Create docker image
       needs: common
-      runs-on: [self-hosted, Linux, x64]
+      runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v1      
         - run: |
             cd build
             run-one ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
