@@ -38,7 +38,7 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
     docker:
-      name: 3.1 Create docker image
+      name: 3.1 Create rootfs cache
       needs: common
       runs-on: [self-hosted, Linux, x64]
       steps:
@@ -47,13 +47,22 @@ jobs:
             echo "cache"
             #run-one ./cacherebuild.sh
     cache:
-      name: 3.2 Create rootfs cache
+      name: 3.2 Create docker image
       needs: common
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
             cd build
             ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
+            docker tag armbian:$(cat VERSION) armbian/build:latest
+    kernels:
+      name: 3.3 Build changed kernels
+      needs: common
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - run: |
+            cd scripts
+            run-one ./beta-repository.sh
     finish:
       name: 4. Cleaning
       needs: [docker, cache]
