@@ -28,9 +28,19 @@ jobs:
       runs-on: [self-hosted, Linux, x64]
       strategy:
         matrix:
-          run: ['run1', 'run2']
+          run: ['Rootfs cache rebuild', 'run2']
       steps:
-        - run: echo Run ${{ matrix.run }}
+          run: |
+            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
+            cd build
+            if [[ ! -f .ignore_changes ]]; then
+               ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
+               touch .ignore_changes
+            fi
+            cp ../scripts/configs/* userpatches/
+            cd ..
+            cd scripts
+            run-one ./cacherebuild.sh
         - run: echo Run ${{ matrix.run }}
     finish:
       needs: prepare
