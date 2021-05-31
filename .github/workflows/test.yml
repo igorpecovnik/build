@@ -112,6 +112,13 @@ jobs:
                    echo "$file"
                 fi
             done) | parallel --jobs 32 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
+    torrents:
+      name: Create torrents
+      needs: sign
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - run: |
+          ssh utils
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign]
