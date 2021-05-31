@@ -86,7 +86,7 @@ jobs:
             cd scripts
             run-one ./betarepository.sh
     sign:
-      name: Sign
+      name: Sign rootfs caches
       needs: cache
       runs-on: [self-hosted, Linux, x64]
       steps:
@@ -109,12 +109,12 @@ jobs:
             cd build/cache/rootfs
             (for file in $(ls | cut -d. -f1-4 | sort -u); do
                 if [ $(ls $file* | wc -l) -lt 3 ]; then
-                   echo "cache/rootfs/$file"
+                   echo "$file"
                 fi
             done) | parallel 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, cache, kernels, sign]
+      needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
