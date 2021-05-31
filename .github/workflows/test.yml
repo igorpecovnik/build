@@ -8,7 +8,7 @@ jobs:
     
     
     docker-bionic:
-      name: Create Docker image on Bionic
+      name: Build docker image on Bionic
       runs-on: ubuntu-18.04
       steps:
         - uses: actions/checkout@v1
@@ -21,7 +21,7 @@ jobs:
 
 
     docker-focal:
-      name: Create Docker image on Focal
+      name: Build Docker image on Focal
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v1
@@ -32,7 +32,7 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
 
     kernels:
-      name: Build changed kernels
+      name: Build changed kernels in beta repo
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Checkout Armbian build script
@@ -60,11 +60,11 @@ jobs:
             sudo rm -f build/userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
-            ./compile.sh dockerpurge all-new-stable-kernels
+            ./compile.sh docker all-new-stable-kernels
 
 
     edge-stable:
-      name: Update edge kernels in stable repo
+      name: Build changed EDGE in stable repo
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Checkout Armbian build script
@@ -93,7 +93,7 @@ jobs:
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
-            ./compile.sh all-new-stable-kernels
+            ./compile.sh docker all-new-stable-kernels
             # upgrade only kernel packages
             find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -R 2> /dev/null
             rm -f output/debs/armbian-* 2> /dev/null
