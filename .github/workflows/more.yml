@@ -14,3 +14,4 @@ jobs:
           key: ${{ secrets.KEY_FOR_TORRENT }}
           name: id_rsa # optional
           known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+          if_key_exists: ignore
