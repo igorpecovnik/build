@@ -58,7 +58,7 @@ jobs:
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ln -fs ../scripts/hash-beta cache/hash-beta
+            sudo ln -fs ../scripts/hash-beta cache/hash-beta
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
@@ -91,7 +91,7 @@ jobs:
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ln -fs ../scripts/hash cache/hash
+            sudo ln -fs ../scripts/hash cache/hash
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
