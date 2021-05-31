@@ -37,6 +37,8 @@ jobs:
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh BOARD=cubietruck BRANCH=current KERNEL_ONLY="yes" RELEASE=focal KERNEL_CONFIGURE="no" 'prepare_host'
             sudo cp ../scripts/configs/* userpatches/
+            sudo rm -r output/debs/* 2> /dev/null
+            sudo rm userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             #[[ -z $(mount | grep hash-beta) ]] && sudo mount ../scripts/hash-beta cache/hash-beta --bind
     cache:
@@ -85,6 +87,15 @@ jobs:
         - run: |
             cd scripts
             run-one ./betarepository.sh
+    edge-stable:
+      name: Update edge kernels in stable repo
+      needs: common
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - run: |
+            cd build
+            cat config/targets.conf | grep edge > userpatches/targets.conf
+            ./compile.sh all-new-stable-kernels
     sign:
       name: Sign rootfs caches
       needs: cache
@@ -121,7 +132,7 @@ jobs:
             ssh 10.0.10.10
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign, torrents]
+      needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, edge-stable, sign, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
