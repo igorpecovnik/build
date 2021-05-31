@@ -135,7 +135,7 @@ jobs:
           run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, docker-hirsute, kernels, edge-stable, torrents]
+      needs: [docker-bionic, docker-focal, docker-hirsute, kernels, edge-stable]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
