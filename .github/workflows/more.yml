@@ -15,3 +15,5 @@ jobs:
           name: id_rsa # optional
           known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
           if_key_exists: ignore
+      - name: Create torrents
+        run: ssh 10.0.10.10
