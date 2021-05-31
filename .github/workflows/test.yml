@@ -72,13 +72,13 @@ jobs:
             path: scripts
             clean: false
         - run: |
-            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
+            echo "BLTPATH=\"$(pwd)/build/\"" | tee build/scripts/cacherebuild.conf build/scripts/betarepository.conf >/dev/null
             [[ ! -f build/.ignore_changes ]] && sudo touch build/.ignore_changes
             sudo cp scripts/configs/* userpatches/
             sudo rm -r build/output/debs/* 
             sudo rm -r build/output/debs-beta/* 
-            sudo rm -f userpatches/targets.conf
-            sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            sudo rm -f build/userpatches/targets.conf
+            sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
             ./compile.sh docker all-new-stable-kernels
 
