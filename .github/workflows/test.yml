@@ -31,26 +31,6 @@ jobs:
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
 
-
-
-    docker-hirsute:
-      name: Create Docker image on Hirsute
-      runs-on: [self-hosted, Linux, x64]
-      steps:
-        - name: Checkout Armbian build script
-          uses: actions/checkout@v2
-          with:
-            fetch-depth: 0
-            repository: armbian/build
-            path: build
-            ref: nightly
-            clean: false
-        - run: |
-            cd build
-            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
- 
     kernels:
       name: Build changed kernels
       runs-on: [self-hosted, Linux, x64]
@@ -80,7 +60,7 @@ jobs:
             sudo rm -f build/userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
-            ./compile.sh docker all-new-stable-kernels
+            ./compile.sh dockerpurge all-new-stable-kernels
 
 
     edge-stable:
