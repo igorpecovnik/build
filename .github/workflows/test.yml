@@ -54,11 +54,10 @@ jobs:
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
-            sudo rm -rf build/cache/hash-beta
-            sudo ln -srf scripts/hash-beta build/cache/hash-beta
             cd build
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            rsync -ar ../scripts/hash-beta/* cache/hash-beta/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo ln -fs ../scripts/hash-beta cache/hash-beta
             sudo cp ../scripts/configs/* userpatches/
@@ -89,11 +88,10 @@ jobs:
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
-            sudo rm -rf build/cache/hash-beta
-            sudo ln -srf scripts/hash build/cache/hash
             cd build
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" 
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            rsync -ar ../scripts/hash/* build/cache/hash/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
