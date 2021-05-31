@@ -19,7 +19,6 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
 
 
-
     docker-focal:
       name: Build Docker image on Focal
       runs-on: ubuntu-latest
@@ -30,6 +29,7 @@ jobs:
             touch .ignore_changes
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+
 
     kernels:
       name: Build all changed kernels in beta repository
@@ -120,6 +120,8 @@ jobs:
             if_key_exists: replace
         - name: Update repository
           run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
+
+
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, kernels, edge-stable]
