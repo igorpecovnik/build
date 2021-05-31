@@ -57,7 +57,7 @@ jobs:
             cd build
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            rsync -ar ../scripts/hash-beta/* cache/hash-beta/
+            sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo ln -fs ../scripts/hash-beta cache/hash-beta
             sudo cp ../scripts/configs/* userpatches/
@@ -91,7 +91,7 @@ jobs:
             cd build
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" 
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            rsync -ar ../scripts/hash/* build/cache/hash/
+            sudo rsync -ar ../scripts/hash/* build/cache/hash/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
