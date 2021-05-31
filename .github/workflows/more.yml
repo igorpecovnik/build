@@ -9,8 +9,6 @@ jobs:
     runs-on: [self-hosted, Linux, x64]
     steps:
       - name: Install SSH key for torrent
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.KEY_FOR_TORRENT }}
@@ -20,8 +18,6 @@ jobs:
       - name: Create torrents
         run: ssh ${{ secrets.SSH_HOST }}
       - name: Install SSH key for repository
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.KEY_FOR_REPOSITORY }}
@@ -29,4 +25,4 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
           if_key_exists: ignore
       - name: Update repository
-        run: ssh ${SSH_HOST}
+        run: ssh ${{ secrets.SSH_HOST }}
