@@ -118,10 +118,10 @@ jobs:
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
-            ssh utils
+            ssh 10.0.10.10
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign]
+      needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
