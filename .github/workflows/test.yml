@@ -118,7 +118,7 @@ jobs:
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
-          ssh utils
+            ssh utils
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign]
