@@ -111,7 +111,7 @@ jobs:
                 if [ $(ls $file* | wc -l) -lt 3 ]; then
                    echo "$file"
                 fi
-            done) | parallel 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
+            done) | parallel --jobs 32 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, sign]
