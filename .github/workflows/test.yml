@@ -57,7 +57,6 @@ jobs:
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            docker tag armbian:$(cat VERSION) armbian/build:latest
     docker-focal:
       name: Create Docker image on Focal
       needs: common
@@ -68,7 +67,6 @@ jobs:
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            docker tag armbian:$(cat VERSION) armbian/build:latest
     docker-hirsute:
       name: Create Docker image on Hirsute
       needs: common
@@ -79,7 +77,6 @@ jobs:
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            docker tag armbian:$(cat VERSION) armbian/build:latest
     kernels:
       name: Build changed kernels
       needs: common
@@ -110,8 +107,11 @@ jobs:
             PASSPHRASE: ${{ secrets.PASSPHRASE }}
           run: |      
             cd build/cache/rootfs
-            find *.lz4 -type f | parallel 'echo $PASSPHRASE | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
-            #echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSION
+            (for file in $(ls | cut -d. -f1-4 | sort -u); do
+                if [ $(ls $file* | wc -l) -lt 3 ]; then
+                   echo "cache/rootfs/$file"
+                fi
+            done) | parallel 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, cache, kernels, sign]
