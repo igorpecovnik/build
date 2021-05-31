@@ -47,8 +47,19 @@ jobs:
         - run: |
             cd scripts
             run-one ./cacherebuild.sh
-    docker:
-      name: Create docker image @ Ubuntu Focal
+    docker-bionic:
+      name: Docker iamge on Bionic
+      needs: common
+      runs-on: ubuntu-18.04
+      steps:
+        - uses: actions/checkout@v1
+        - run: |
+            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            touch .ignore_changes
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            docker tag armbian:$(cat VERSION) armbian/build:latest
+    docker-focal:
+      name: Docker image on Focal
       needs: common
       runs-on: ubuntu-latest
       steps:
@@ -87,11 +98,12 @@ jobs:
           env:
             PASSPHRASE: ${{ secrets.PASSPHRASE }}
           run: |      
-            cd build
-            echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSION
+            cd build/cache/rootfs
+            find *.lz4 -type f | parallel 'echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
+            #echo $PASSPHRASE | gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes VERSION
     finish:
       name: 4. Cleaning
-      needs: [docker, cache, kernels,sign]
+      needs: [docker-bionic, docker-focal, cache, kernels, sign]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
