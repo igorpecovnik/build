@@ -5,8 +5,8 @@ on:
   schedule:
     - cron:  '0 */3 * * *'
 jobs:
-    #
-    #
+    
+    
     docker-bionic:
       name: Create Docker image on Bionic
       runs-on: ubuntu-18.04
@@ -16,6 +16,7 @@ jobs:
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+
     docker-focal:
       name: Create Docker image on Focal
       runs-on: ubuntu-latest
@@ -25,8 +26,19 @@ jobs:
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-    #
-    #
+
+    docker-hirsute:
+      name: Create Docker image on Hirsute
+      needs: [prepare, common]
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - run: |
+            cd build
+            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+ 
+    
     prepare:
       name: Prepare runner
       runs-on: [self-hosted, Linux, x64]
@@ -72,16 +84,6 @@ jobs:
         - run: |
             cd scripts
             run-one ./cacherebuild.sh
-    docker-hirsute:
-      name: Create Docker image on Hirsute
-      needs: [prepare, common]
-      runs-on: [self-hosted, Linux, x64]
-      steps:
-        - run: |
-            cd build
-            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
     kernels:
       name: Build changed kernels
       needs: [prepare, common]
