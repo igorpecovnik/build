@@ -82,7 +82,7 @@ jobs:
             ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
     kernels:
       name: Build changed kernels
-      needs: common
+      needs: [prepare, common]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
@@ -90,7 +90,7 @@ jobs:
             run-one ./betarepository.sh
     edge-stable:
       name: Update edge kernels in stable repo
-      needs: [common, kernels]
+      needs: [prepare, common, kernels]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
