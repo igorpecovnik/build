@@ -1,0 +1,12 @@
+runs-on: [self-hosted, Linux, x64]
+steps:
+- name: Install SSH key
+  uses: shimataro/ssh-key-action@v2
+  with:
+    key: ${{ secrets.KEY_FOR_TORRENT }}
+    name: id_rsa # optional
+    known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+    config: ${{ secrets.CONFIG }} # ssh_config; optional
+    if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+- name: Execute torrent creation
+  run: ssh user@10.0.10.10
