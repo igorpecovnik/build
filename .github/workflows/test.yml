@@ -15,7 +15,10 @@ jobs:
         - run: |
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+
+
 
     docker-focal:
       name: Create Docker image on Focal
@@ -25,13 +28,23 @@ jobs:
         - run: |
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+
+
 
     docker-hirsute:
       name: Create Docker image on Hirsute
-      needs: [prepare, common]
       runs-on: [self-hosted, Linux, x64]
       steps:
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
         - run: |
             cd build
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
