@@ -97,6 +97,10 @@ jobs:
             cd build
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             ./compile.sh all-new-stable-kernels
+            # upgrade only kernel packages
+            find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -R 2> /dev/null
+            rm -f output/debs/armbian-* 2> /dev/null
+            rm -f output/debs/linux-libc-* 2> /dev/null
     sign:
       name: Sign rootfs caches
       needs: cache
