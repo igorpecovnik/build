@@ -90,7 +90,7 @@ jobs:
             #sudo rm -r build/output/debs/*             
             #sudo rm -r build/output/debs-beta/*             
             #sudo rm -f userpatches/targets.conf
-            sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             ./compile.sh all-new-stable-kernels
