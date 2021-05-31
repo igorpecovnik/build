@@ -14,6 +14,5 @@ jobs:
           key: ${{ secrets.KEY_FOR_TORRENT }}
           name: id_rsa # optional
           known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
      - name: Execute torrent creation
        run: ssh user@10.0.10.10
