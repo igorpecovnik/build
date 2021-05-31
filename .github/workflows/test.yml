@@ -74,7 +74,7 @@ jobs:
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             [[ ! -f build/.ignore_changes ]] && sudo touch build/.ignore_changes
-            sudo cp scripts/configs/* userpatches/
+            sudo cp scripts/configs/* build/userpatches/
             sudo rm -r build/output/debs/* 
             sudo rm -r build/output/debs-beta/* 
             sudo rm -f build/userpatches/targets.conf
@@ -106,7 +106,7 @@ jobs:
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             [[ ! -f build/.ignore_changes ]] && sudo touch build/.ignore_changes
-            sudo cp scripts/configs/* userpatches/
+            sudo cp scripts/configs/* build/userpatches/
             sudo rm -r build/output/debs/*             
             sudo rm -r build/output/debs-beta/*             
             sudo rm -f userpatches/targets.conf
