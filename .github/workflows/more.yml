@@ -21,7 +21,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.KEY_FOR_REPOSITORY }}
-          name: id_rsa # optional
+          name: id_xxx # optional
           known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
           if_key_exists: ignore
       - name: Create torrents
