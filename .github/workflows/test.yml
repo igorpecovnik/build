@@ -63,6 +63,7 @@ jobs:
             sudo rm -f userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
             ./compile.sh docker all-new-stable-kernels
+            sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
 
     edge-stable:
       name: Build edge changed kernels in stable repo repository
@@ -88,7 +89,7 @@ jobs:
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" 
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             sudo rsync -ar ../scripts/hash/* build/cache/hash/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
@@ -100,6 +101,7 @@ jobs:
             #find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -fR 2> /dev/null
             rm -f output/debs/armbian-* 2> /dev/null
             rm -f output/debs/linux-libc-* 2> /dev/null
+            sudo rsync -ar cache/hash/* ../scripts/hash/
 
 
     repository:
