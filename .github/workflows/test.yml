@@ -62,7 +62,7 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
-            ./compile.sh all-new-stable-kernels
+            ./compile.sh docker all-new-stable-kernels
 
     edge-stable:
       name: Build edge changed kernels in stable repo repository
@@ -95,7 +95,7 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
-            ./compile.sh all-new-stable-kernels
+            #./compile.sh all-new-stable-kernels
             # upgrade only kernel packages
             #find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -fR 2> /dev/null
             rm -f output/debs/armbian-* 2> /dev/null
