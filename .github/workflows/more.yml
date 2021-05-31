@@ -17,3 +17,12 @@ jobs:
           if_key_exists: ignore
       - name: Create torrents
         run: ssh 10.0.10.10
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.KEY_FOR_REPOSITORY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+          if_key_exists: ignore
+      - name: Create torrents
+        run: ssh 10.0.10.10
