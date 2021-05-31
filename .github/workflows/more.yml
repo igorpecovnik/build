@@ -16,7 +16,7 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
           if_key_exists: ignore
       - name: Create torrents
-        run: ssh ${{ secrets.SSH_HOST }}
+        run: ssh -i id_torrent ${{ secrets.SSH_HOST }}
       - name: Install SSH key for repository
         uses: shimataro/ssh-key-action@v2
         with:
@@ -25,4 +25,4 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
           if_key_exists: ignore
       - name: Update repository
-        run: ssh ${{ secrets.SSH_HOST }}
+        run: ssh -i id_repository ${{ secrets.SSH_HOST }}
