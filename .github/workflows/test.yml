@@ -39,7 +39,7 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -r output/debs/* 2> /dev/null
             sudo rm -r output/debs-beta/* 2> /dev/null
-            sudo rm userpatches/targets.conf
+            sudo rm -f userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             #[[ -z $(mount | grep hash-beta) ]] && sudo mount ../scripts/hash-beta cache/hash-beta --bind
     cache:
