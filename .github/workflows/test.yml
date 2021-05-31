@@ -55,14 +55,15 @@ jobs:
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            mkdir -p cache/hash-beta
             sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
-            ./compile.sh docker all-new-stable-kernels
+            ./compile.sh all-new-stable-kernels
             sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
 
     edge-stable:
@@ -89,14 +90,15 @@ jobs:
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            mkdir -p build/cache/hash/
             sudo rsync -ar ../scripts/hash/* build/cache/hash/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
-            #./compile.sh all-new-stable-kernels
+            ./compile.sh all-new-stable-kernels
             # upgrade only kernel packages
             #find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -fR 2> /dev/null
             rm -f output/debs/armbian-* 2> /dev/null
