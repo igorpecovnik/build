@@ -59,7 +59,6 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            sudo ln -fs ../scripts/hash-beta cache/hash-beta
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
