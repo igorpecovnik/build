@@ -103,7 +103,7 @@ jobs:
             rm -f output/debs/linux-libc-* 2> /dev/null
     sign:
       name: Sign rootfs caches
-      needs: cache
+      needs: [prepare, common, cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
         -
@@ -130,7 +130,7 @@ jobs:
             done) | parallel --jobs 32 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
     torrents:
       name: Create torrents
-      needs: sign
+      needs: [prepare, common,sign]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for torrent
@@ -144,7 +144,7 @@ jobs:
           run: ssh -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
     repository:
       name: Update repository
-      needs: [kernels, edge-stable] 
+      needs: [prepare, common, kernels, edge-stable] 
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for repository
@@ -158,7 +158,7 @@ jobs:
           run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, edge-stable, sign, torrents]
+      needs: [prepare, common, docker-bionic, docker-focal, docker-hirsute, cache, kernels, edge-stable, sign, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
