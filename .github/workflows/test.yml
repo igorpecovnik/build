@@ -133,8 +133,29 @@ jobs:
       needs: sign
       runs-on: [self-hosted, Linux, x64]
       steps:
-        - run: |
-            ssh 10.0.10.10
+        - name: Install SSH key for torrent
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            name: id_torrent # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+         - name: Create torrents
+           run: ssh -i ~/.ssh/id_torrent ${{ secrets.SSH_HOST }}
+    repository:
+      name: Update repository
+      needs: [kernels, edge-stable] 
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Install SSH key for repository
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            name: id_repository # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            if_key_exists: ignore
+        - name: Update repository
+          run: ssh -i ~/.ssh/id_repository ${{ secrets.SSH_HOST }}
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, edge-stable, sign, torrents]
