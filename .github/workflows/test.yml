@@ -141,7 +141,7 @@ jobs:
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
         - name: Create torrents
-          run: ssh -i ~/.ssh/id_torrent ${{ secrets.SSH_HOST }}
+          run: ssh -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
     repository:
       name: Update repository
       needs: [kernels, edge-stable] 
@@ -155,7 +155,7 @@ jobs:
             known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
             if_key_exists: replace
         - name: Update repository
-          run: ssh -i ~/.ssh/id_repository ${{ secrets.SSH_HOST }}
+          run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
     finish:
       name: Cleaning
       needs: [docker-bionic, docker-focal, docker-hirsute, cache, kernels, edge-stable, sign, torrents]
