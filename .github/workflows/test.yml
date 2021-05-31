@@ -95,7 +95,7 @@ jobs:
       steps:
         - run: |
             cd build
-            cat config/targets.conf | grep edge > userpatches/targets.conf
+            cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             ./compile.sh all-new-stable-kernels
     sign:
       name: Sign rootfs caches
