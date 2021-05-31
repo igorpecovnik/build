@@ -72,7 +72,7 @@ jobs:
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
     docker-hirsute:
       name: Create Docker image on Hirsute
-      needs: common
+      needs: [prepare, common]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
@@ -139,7 +139,7 @@ jobs:
             key: ${{ secrets.KEY_FOR_TORRENT }}
             name: id_torrent # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
-            if_key_exists: ignore
+            if_key_exists: replace
         - name: Create torrents
           run: ssh -i ~/.ssh/id_torrent ${{ secrets.SSH_HOST }}
     repository:
@@ -153,7 +153,7 @@ jobs:
             key: ${{ secrets.KEY_FOR_REPOSITORY }}
             name: id_repository # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
-            if_key_exists: ignore
+            if_key_exists: replace
         - name: Update repository
           run: ssh -i ~/.ssh/id_repository ${{ secrets.SSH_HOST }}
     finish:
