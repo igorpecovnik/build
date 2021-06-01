@@ -37,6 +37,8 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="no" REPOSITORY_INSTALL="kernel" 'prepare_host'
             #mkdir -p cache/hash-beta
             sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
+            # debug
+            sudo rsync -ar ../patch/* lib/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
