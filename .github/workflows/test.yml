@@ -44,6 +44,7 @@ jobs:
         - name: Run script
           shell: bash {0}
           run: |
+            cd build
             run-one ./compile.sh all-new-beta-kernels
             #sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
 
