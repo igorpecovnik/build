@@ -41,8 +41,10 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             #sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
-
-            ./compile.sh all-new-beta-kernels
+        - name: Run script
+          shell: bash {0}
+          run: |
+            run-one ./compile.sh all-new-beta-kernels
             #sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
 
         - name: Install SSH key for repository
