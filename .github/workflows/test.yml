@@ -1,4 +1,4 @@
-name: CI 1
+name: CI
 on:
   push:
     branches: master
@@ -7,30 +7,6 @@ on:
 jobs:
   
     
-    docker-bionic:
-      name: Build docker image on Bionic
-      runs-on: ubuntu-18.04
-      steps:
-        - uses: actions/checkout@v1
-        - run: |
-            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
-            touch .ignore_changes
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
-            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-
-
-    docker-focal:
-      name: Build Docker image on Focal
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v1
-        - run: |
-            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
-            touch .ignore_changes
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
-            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-
-
     kernels:
       name: Build all changed kernels in beta repository
       runs-on: [self-hosted, Linux, x64]
@@ -99,7 +75,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, kernels]
+      needs: kernels
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
