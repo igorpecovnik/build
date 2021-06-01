@@ -92,8 +92,8 @@ jobs:
             cd build
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            mkdir -p build/cache/hash/
-            sudo rsync -ar ../scripts/hash/* build/cache/hash/
+            mkdir -p cache/hash/
+            sudo rsync -ar ../scripts/hash/* cache/hash/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
