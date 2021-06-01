@@ -113,7 +113,7 @@ jobs:
             if_key_exists: replace
         - run: |
             sudo apt-get -y -qq install lftp
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms --newer-than=now-2days --only-newer /home/igorp/actions-runner/_work/build/build/build/output/debs-beta ;bye" sftp://users.armbian.com
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms --newer-than=now-2days --only-newer output ;bye" sftp://users.armbian.com
 
     repository:
       name: Update repository
