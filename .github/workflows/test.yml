@@ -79,7 +79,7 @@ jobs:
         - run: |
             sudo apt-get -y -qq install lftp
             pwd
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/ . ;bye" sftp://users.armbian.com
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ . ;bye" sftp://users.armbian.com
 
     repository:
       name: Update repository
