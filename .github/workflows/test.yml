@@ -5,7 +5,7 @@ on:
   schedule:
     - cron:  '0 */3 * * *'
 jobs:
-    
+  
     
     docker-bionic:
       name: Build docker image on Bionic
@@ -82,7 +82,7 @@ jobs:
 
     repository:
       name: Update repository
-      needs: [kernels, edge-stable] 
+      needs: kernels 
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for repository
