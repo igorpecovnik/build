@@ -57,16 +57,16 @@ jobs:
 
         - run: |
             cd build
-            sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="no" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            mkdir -p cache/hash-beta
-            sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
+            #sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
+            #./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="no" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            #mkdir -p cache/hash-beta
+            #sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
-            sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
+            #sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
             ./compile.sh all-new-beta-kernels
-            sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
+            #sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
 
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
