@@ -1,0 +1,142 @@
+name: CI
+on:
+  push:
+    branches: master
+  schedule:
+    - cron:  '0 */3 * * *'
+jobs:
+    
+    
+    docker-bionic:
+      name: Build docker image on Bionic
+      runs-on: ubuntu-18.04
+      steps:
+        - uses: actions/checkout@v1
+        - run: |
+            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            touch .ignore_changes
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+
+
+    docker-focal:
+      name: Build Docker image on Focal
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v1
+        - run: |
+            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+            touch .ignore_changes
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+
+
+    kernels:
+      name: Build all changed kernels in beta repository
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+        - name: Checkout Armbian support scripts
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/scripts
+            token: ${{ secrets.PAT }}
+            path: scripts
+            clean: false
+        - run: |
+            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
+            sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
+            cd build
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            mkdir -p cache/hash-beta
+            sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            sudo cp ../scripts/configs/* userpatches/
+            sudo rm -f userpatches/targets.conf
+            sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
+            ./compile.sh docker all-new-stable-kernels
+            sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
+
+    edge-stable:
+      name: Build edge changed kernels in stable repo repository
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+        - name: Checkout Armbian support scripts
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/scripts
+            token: ${{ secrets.PAT }}
+            path: scripts
+            clean: false
+        - run: |
+            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
+            sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
+            cd build
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            mkdir -p cache/hash/
+            sudo rsync -ar ../scripts/hash/* cache/hash/
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            sudo cp ../scripts/configs/* userpatches/
+            cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
+            sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
+            ./compile.sh docker all-new-stable-kernels
+            # upgrade only kernel packages
+            #find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -fR 2> /dev/null
+            rm -f output/debs/armbian-* 2> /dev/null
+            rm -f output/debs/linux-libc-* 2> /dev/null
+            sudo rsync -ar cache/hash/* ../scripts/hash/
+        - name: Install SSH key for repository
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            name: id_repository # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            if_key_exists: replace
+        - run: |
+            sudo apt-get -y -qq install lftp
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms --newer-than=now-2days --only-newer output ;bye" sftp://users.armbian.com
+
+    repository:
+      name: Update repository
+      needs: [kernels, edge-stable] 
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Install SSH key for repository
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            name: id_repository # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            if_key_exists: replace
+        - name: Update repository
+          run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
+
+
+    finish:
+      name: Cleaning
+      needs: [docker-bionic, docker-focal, kernels, edge-stable]
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Run script
+          shell: bash {0}
+          run: |
+            echo "xxxx"
