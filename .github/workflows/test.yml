@@ -104,7 +104,16 @@ jobs:
             rm -f output/debs/armbian-* 2> /dev/null
             rm -f output/debs/linux-libc-* 2> /dev/null
             sudo rsync -ar cache/hash/* ../scripts/hash/
-
+        - name: Install SSH key for repository
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            name: id_repository # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            if_key_exists: replace
+        - run: |
+            apt -y -qq install lftp
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms --newer-than=now-2days --only-newer /home/igorp/actions-runner/_work/build/build/build/output/debs-beta ;bye" sftp://users.armbian.com
 
     repository:
       name: Update repository
