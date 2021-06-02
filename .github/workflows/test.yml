@@ -68,9 +68,9 @@ jobs:
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
           with:
-            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            key: ${{ secrets.KEY_FOR_TORRENT }}
             #name: id_rsa # optional
-            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
         - name: Deploy to server
           run: |            
@@ -124,9 +124,9 @@ jobs:
         - name: Install SSH key for storage
           uses: shimataro/ssh-key-action@v2
           with:
-            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            key: ${{ secrets.KEY_FOR_TORRENT }}
             #name: id_rsa # optional
-            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
         - run: |
             sudo apt-get -y -qq install lftp
