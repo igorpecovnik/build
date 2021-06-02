@@ -16,7 +16,8 @@ jobs:
       name: Build Docker image
       runs-on: [self-hosted, Linux, x64]
       steps:
-        - run: |
+        - name: Fix permissions
+          run: |
             sudo chown -R $USER:$USER .
         - uses: actions/checkout@v1
         - run: |
@@ -27,10 +28,11 @@ jobs:
 
 
     kernels:
-      name: Build all changed kernels in beta repository
+      name: Build changed kernels / beta
       runs-on: [self-hosted, Linux, x64]
       steps:
-        - run: |
+        - name: Fix permissions
+          run: |
             sudo chown -R $USER:$USER .
         - name: Checkout Armbian build script
           uses: actions/checkout@v2
@@ -75,7 +77,7 @@ jobs:
 
 
     edge-stable:
-      name: Build edge changed kernels in stable repo repository
+      name: Build changed edge kernels / stable
       runs-on: [self-hosted, Linux, x64]
       steps:
         - run: |
