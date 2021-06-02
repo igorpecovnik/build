@@ -48,7 +48,8 @@ jobs:
             token: ${{ secrets.PAT }}
             path: scripts
             clean: false
-        - run: |
+        - name: Build all changed kernels
+          run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
@@ -60,6 +61,18 @@ jobs:
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
             sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
+        - name: Install SSH key for repository
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_REPOSITORY }}
+            name: id_repository # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            if_key_exists: replace
+        - name: Deploy to server
+          run: |            
+            sudo apt-get -y -qq install lftp
+            sudo lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ . ;bye" sftp://users.armbian.com
+
 
     edge-stable:
       name: Build edge changed kernels in stable repo repository
