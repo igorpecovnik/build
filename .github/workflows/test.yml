@@ -96,7 +96,8 @@ jobs:
             token: ${{ secrets.PAT }}
             path: scripts
             clean: false
-        - run: |
+        - name: Build all edge changed kernels for stable repository
+          run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
@@ -114,12 +115,12 @@ jobs:
             rm -f output/debs/armbian-* 2> /dev/null
             rm -f output/debs/linux-libc-* 2> /dev/null
             sudo rsync -ar cache/hash/* ../scripts/hash/
-        - name: Install SSH key for repository
+        - name: Install SSH key for storage
           uses: shimataro/ssh-key-action@v2
           with:
-            key: ${{ secrets.KEY_FOR_REPOSITORY }}
-            name: id_repository # optional
-            known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
         - run: |
             sudo apt-get -y -qq install lftp
