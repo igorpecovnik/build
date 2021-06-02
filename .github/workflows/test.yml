@@ -16,6 +16,25 @@ jobs:
       name: Create rootfs cache
       runs-on: [self-hosted, Linux, x64, big]
       steps:
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+        - name: Checkout Armbian support scripts
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/scripts
+            token: ${{ secrets.PAT }}
+            path: scripts
+            clean: false
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd scripts
@@ -204,7 +223,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, kernels, edge-stable, repository, torrents, cache]
+      needs: [docker, repository, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
