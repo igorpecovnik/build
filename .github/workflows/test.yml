@@ -12,6 +12,34 @@ on:
 
 jobs:
 
+    cache:
+      name: Create rootfs cache
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+        - run: |
+            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
+            cd scripts
+            run-one ./cacherebuild.sh
+        - name: Import GPG key
+          if: ${{ success() }}
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            #git-user-signingkey: true
+            #git-commit-gpgsign: true
+        - name: Sign commit and push changes
+          if: ${{ success() }}
+          env:
+            PASSPHRASE: ${{ secrets.PASSPHRASE }}
+          run: |      
+            cd build/cache/rootfs
+            (for file in $(ls | cut -d. -f1-4 | sort -u); do
+                if [ $(ls $file* | wc -l) -lt 3 ]; then
+                   echo "$file"
+                fi
+            done) | parallel --jobs 32 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
+
     docker:
       name: Docker image
       runs-on: ubuntu-latest
@@ -160,7 +188,7 @@ jobs:
 
     torrents:
       name: Update torrent network
-      needs: [kernels, edge-stable]
+      needs: [kernels, edge-stable, cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for torrent
@@ -176,7 +204,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, kernels, edge-stable, repository, torrents]
+      needs: [docker, kernels, edge-stable, repository, torrents, cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
