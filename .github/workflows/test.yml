@@ -76,8 +76,7 @@ jobs:
           run: |            
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
-            sudo find $(pwd)/build/output/debs-beta/ -type d -empty -delete
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --no-empty-dirs --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ . ;bye" sftp://users.armbian.com
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ debs-beta/ ;bye" sftp://users.armbian.com
 
 
     edge-stable:
@@ -132,9 +131,8 @@ jobs:
         - run: |
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
-            sudo find $(pwd)/build/output/debs-beta/ -type d -empty -delete
-            ls $(pwd)/build/output/debs-beta/
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --no-empty-dirs --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs/ . ;bye" sftp://users.armbian.com
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ debs/ ;bye" sftp://users.armbian.com
+
 
     repository:
       name: Update repository
