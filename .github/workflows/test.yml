@@ -20,7 +20,7 @@ jobs:
         - run: |
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
-            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
 
 
@@ -47,11 +47,11 @@ jobs:
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             mkdir -p cache/hash-beta
             sudo rsync -ar ../scripts/hash-beta/* cache/hash-beta/
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
@@ -81,11 +81,11 @@ jobs:
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             mkdir -p cache/hash/
             sudo rsync -ar ../scripts/hash/* cache/hash/
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
