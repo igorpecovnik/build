@@ -75,14 +75,16 @@ jobs:
         - name: Deploy to server
           run: |            
             sudo apt-get -y -qq install lftp
-            sudo lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ . ;bye" sftp://users.armbian.com
+            sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ . ;bye" sftp://users.armbian.com
 
 
     edge-stable:
       name: Build changed stable edge kernels
       runs-on: [self-hosted, Linux, x64]
       steps:
-        - run: |
+        - name: Fix permissions
+          run: |
             sudo chown -R $USER:$USER .
         - name: Checkout Armbian build script
           uses: actions/checkout@v2
@@ -128,7 +130,8 @@ jobs:
             if_key_exists: replace
         - run: |
             sudo apt-get -y -qq install lftp
-            sudo lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs/ . ;bye" sftp://users.armbian.com
+            sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs/ . ;bye" sftp://users.armbian.com
 
     repository:
       name: Update repository
