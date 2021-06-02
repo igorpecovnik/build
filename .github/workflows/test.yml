@@ -38,10 +38,11 @@ jobs:
         - run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
+            sudo mkdir -p userpatches
+            sudo cp ../scripts/configs/* userpatches/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             cd ../scripts
             run-one ./cacherebuild.sh
