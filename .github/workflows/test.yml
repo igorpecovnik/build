@@ -76,6 +76,7 @@ jobs:
           run: |            
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
+            sudo find $(pwd)/build/output/debs-beta/ -type d -empty -delete
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ . ;bye" sftp://users.armbian.com
 
 
@@ -131,6 +132,7 @@ jobs:
         - run: |
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
+            sudo find $(pwd)/build/output/debs-beta/ -type d -empty -delete
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --parallel=8 --no-perms $(pwd)/build/output/debs/ . ;bye" sftp://users.armbian.com
 
     repository:
