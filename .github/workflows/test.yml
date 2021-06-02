@@ -123,6 +123,7 @@ jobs:
         - name: Make BSP packages
           if: ${{ success() }}
           run: |
+            cd build
             ./compile.sh all-new-beta-bsp
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
