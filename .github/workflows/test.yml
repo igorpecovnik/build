@@ -65,6 +65,10 @@ jobs:
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
             sudo rsync -ar cache/hash-beta/* ../scripts/hash-beta/
+        - name: Make BSP packages
+          if: ${{ success() }}
+          run: |
+            ./compile.sh all-new-beta-bsp
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
           with:
@@ -134,7 +138,7 @@ jobs:
           run: |
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ debs/ ;bye" sftp://users.armbian.com
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ debs/ ;bye" sftp://users.armbian.com
 
 
     repository:
@@ -171,7 +175,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, kernels, edge-stable, repository]
+      needs: [docker, kernels, edge-stable, repository, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
