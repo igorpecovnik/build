@@ -13,8 +13,9 @@ on:
 jobs:
 
     docker:
-      name: Build Docker image
-      runs-on: [self-hosted, Linux, x64]
+      name: Docker image
+      runs-on: ubuntu-latest
+      #runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Fix permissions
           run: |
@@ -25,12 +26,12 @@ jobs:
           run: |
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
-            ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
 
 
     kernels:
-      name: Build changed beta kernels
+      name: Changed beta kernels
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Fix permissions
@@ -85,7 +86,7 @@ jobs:
 
 
     edge-stable:
-      name: Build changed stable edge kernels
+      name: Changed stable edge kernels
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Fix permissions
@@ -142,7 +143,7 @@ jobs:
 
 
     repository:
-      name: Update repository
+      name: Update package repository
       needs: [kernels, edge-stable] 
       runs-on: [self-hosted, Linux, x64]
       steps:
@@ -158,7 +159,7 @@ jobs:
 
 
     torrents:
-      name: Create torrents
+      name: Update torrent network
       needs: [kernels, edge-stable]
       runs-on: [self-hosted, Linux, x64]
       steps:
