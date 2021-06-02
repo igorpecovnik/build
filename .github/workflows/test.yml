@@ -12,7 +12,7 @@ on:
 
 jobs:
 
-    docker-focal:
+    docker:
       name: Build Docker image
       runs-on: ubuntu-latest
       steps:
@@ -124,7 +124,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker-bionic, docker-focal, kernels, edge-stable]
+      needs: [docker, kernels, edge-stable]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
