@@ -65,6 +65,13 @@ jobs:
                    echo "$file"
                 fi
             done) | parallel --jobs 32 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
+        - name: Upload artefacts
+          if: ${{ success() }}
+          run: |
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/cache/rootfs/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/cache/rootfs/ rootfs/ ;bye" sftp://users.armbian.com
+
 
     docker:
       name: Docker image
