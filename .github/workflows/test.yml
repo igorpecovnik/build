@@ -71,7 +71,7 @@ jobs:
           run: |
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/cache/rootfs/
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/cache/rootfs/ rootfs/ ;bye" sftp://users.armbian.com
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --delete --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/cache/rootfs/ rootfs/ ;bye" sftp://users.armbian.com
 
 
     docker:
