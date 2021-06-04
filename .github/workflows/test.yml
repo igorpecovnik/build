@@ -295,7 +295,7 @@ jobs:
 
 
     torrents:
-      name: Update torrent network
+      name: Update download infrastructure
       needs: [kernels, edge-stable, cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
