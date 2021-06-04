@@ -178,7 +178,7 @@ jobs:
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
-            git-committer-emai: igor.pecovnik@gmail.com
+            git-committer-email: igor.pecovnik@gmail.com
 
         - name: Build all changed kernels
           run: |
@@ -197,6 +197,15 @@ jobs:
             git add .
             git commit -m "Update hashes"
             git push
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+            git-committer-email: igor.pecovnik@gmail.com
         - name: Make BSP packages
           if: ${{ success() }}
           run: |
