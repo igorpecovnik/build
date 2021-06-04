@@ -206,7 +206,6 @@ jobs:
             workdir: build
             git-user-signingkey: true
             git-commit-gpgsign: true
-            git-committer-email: igor.pecovnik@gmail.com
         - name: Make BSP packages
           if: ${{ success() }}
           run: |
