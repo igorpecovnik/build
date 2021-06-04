@@ -192,10 +192,12 @@ jobs:
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
             sudo rsync -ar --delete cache/hash-beta/* ../scripts/hash-beta/
-            cd ../scripts/hash-beta
-            git add .
-            git commit -m "Update hashes"
-            git push
+            if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
+              cd ../scripts/hash-beta
+              git add .
+              git commit -m "Update hashes"
+              git push
+            fi
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
