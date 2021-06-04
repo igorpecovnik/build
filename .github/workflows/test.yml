@@ -132,7 +132,7 @@ jobs:
           if: ${{ success() }}
           run: |
             cd build
-            if [[ $(cat .tmp/n_ 2> /dev/null) -ne 0 ]]; then
+            if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
               ./compile.sh all-new-beta-bsp
             else
               exit 0
