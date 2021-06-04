@@ -93,7 +93,7 @@ jobs:
 
 
     docker-arm64:
-      name: Docker image on aarch64
+      name: Docker image on arm64
       runs-on: [self-hosted, Linux, ARM64]
       steps:
         - name: Fix permissions
