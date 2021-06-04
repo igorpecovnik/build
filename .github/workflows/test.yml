@@ -116,6 +116,37 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
 
 
+    virtual-arm64:
+      name: Virtual image on arm64
+      needs: [docker-arm64]
+      runs-on: [self-hosted, Linux, ARM64]
+      steps:
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+        - name: Build Docker image
+          run: |
+            sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh docker \
+            KERNEL_ONLY="yes" \
+            BOARD="virtual-qemu" \
+            BRANCH="current" \
+            KERNEL_CONFIGURE="no" \
+            KERNEL_ONLY="no" \
+            RELEASE="focal" \
+            BUILD_DESKTOP="no" \
+            BUILD_MINIMAL="no"
+
     kernels:
       name: Changed beta kernels
       runs-on: [self-hosted, Linux, x64]
@@ -281,7 +312,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, docker-arm64, repository, torrents]
+      needs: [docker, virtual-arm64, repository, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
