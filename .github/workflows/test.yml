@@ -132,20 +132,20 @@ jobs:
             path: build
             ref: nightly
             clean: false
-        - name: Build Docker image
-          run: |
-            sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
-            cd build
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ./compile.sh docker \
-            KERNEL_ONLY="yes" \
-            BOARD="virtual-qemu" \
-            BRANCH="current" \
-            KERNEL_CONFIGURE="no" \
-            KERNEL_ONLY="no" \
-            RELEASE="focal" \
-            BUILD_DESKTOP="no" \
-            BUILD_MINIMAL="no"
+#        - name: Build Docker image
+#          run: |
+#            sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
+#            cd build
+#            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+#            ./compile.sh docker \
+#            KERNEL_ONLY="yes" \
+#            BOARD="virtual-qemu" \
+#            BRANCH="current" \
+#            KERNEL_CONFIGURE="no" \
+#            KERNEL_ONLY="no" \
+#            RELEASE="focal" \
+#            BUILD_DESKTOP="no" \
+#            BUILD_MINIMAL="no"
 
     kernels:
       name: Changed beta kernels
