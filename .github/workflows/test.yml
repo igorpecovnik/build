@@ -170,6 +170,14 @@ jobs:
             token: ${{ secrets.PAT }}
             path: scripts
             clean: true
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
         - name: Build all changed kernels
           run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
