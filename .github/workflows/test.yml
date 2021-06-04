@@ -178,6 +178,7 @@ jobs:
             workdir: build
             git-user-signingkey: true
             git-commit-gpgsign: true
+            git-committer-emai: igor.pecovnik@gmail.com
 
         - name: Build all changed kernels
           run: |
