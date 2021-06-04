@@ -274,7 +274,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, repository, torrents]
+      needs: [docker, docker-arm64, repository, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
