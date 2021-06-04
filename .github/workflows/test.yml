@@ -35,7 +35,8 @@ jobs:
             token: ${{ secrets.PAT }}
             path: scripts
             clean: false
-        - run: |
+        - name: Build rootfs cache
+          run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
             sudo mkdir -p userpatches
@@ -131,7 +132,7 @@ jobs:
           if: ${{ success() }}
           run: |
             cd build
-            ./compile.sh all-new-beta-bsp
+            [[ $(cat .tmp/n_ 2> /dev/null) -ne 0 ]] && ./compile.sh all-new-beta-bsp
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
           with:
