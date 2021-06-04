@@ -169,7 +169,7 @@ jobs:
             repository: armbian/scripts
             token: ${{ secrets.PAT }}
             path: scripts
-            clean: false
+            clean: true
         - name: Build all changed kernels
           run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
