@@ -99,8 +99,14 @@ jobs:
         - name: Fix permissions
           run: |
             sudo chown -R $USER:$USER .
-        - name: Checkout repository
-          uses: actions/checkout@v1
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
         - name: Build Docker image
           run: |
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
