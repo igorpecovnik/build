@@ -194,9 +194,11 @@ jobs:
             sudo rsync -ar --delete cache/hash-beta/* ../scripts/hash-beta/
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
               cd ../scripts/hash-beta
-              git add .
-              git commit -m "Update hashes"
-              git push
+              if git status --porcelain | grep .; then
+                git add .
+                git commit -m "Update hashes"
+                git push
+              fi
             fi
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
@@ -214,7 +216,20 @@ jobs:
               ./compile.sh all-new-beta-bsp
               if [[ "$(git symbolic-ref --short -q HEAD)" == nightly ]]; then
                  echo "Bump version"
+                 CURRENT_VERSION=$(cat VERSION)
+                 NEW_VERSION="${CURRENT_VERSION%%-trunk}"
+                 if [[ $CURRENT_VERSION == *trunk* ]]; then
+                    NEW_VERSION=$(echo "${CURRENT_VERSION}" | cut -d. -f1-3)"."$((${NEW_VERSION##*.} + 1))
+                 else
+                    NEW_VERSION=$(echo "${CURRENT_VERSION}" | cut -d. -f1-2)"."$((${NEW_VERSION##*.} + 1))
+                 fi
+                 echo "${NEW_VERSION}" > VERSION
+                 git add VERSION
+                 git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
+                 git push
               fi
+            else
+              exit 0
             fi
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
