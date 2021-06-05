@@ -230,7 +230,7 @@ jobs:
             #  fi
             #else
             exit 0
-            #fi
+            fi
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
           with:
