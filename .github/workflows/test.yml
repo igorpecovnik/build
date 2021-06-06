@@ -147,7 +147,7 @@ jobs:
 #            BUILD_DESKTOP="no" \
 #            BUILD_MINIMAL="no"
 
-    kernels:
+    beta-kernels:
       name: Changed beta kernels
       runs-on: [self-hosted, Linux, x64]
       steps:
@@ -213,14 +213,17 @@ jobs:
           if: ${{ success() }}
           run: |
             cd build
+            rm -f .tmp/bump
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
               ./compile.sh all-new-beta-bsp
+              touch .tmp/bump
             fi
         - name: Bump version
           if: ${{ success() }}
           run: |
             cd build
-            if [[ "$(git symbolic-ref --short -q HEAD)" == nightly ]]; then
+            if [[ "$(git symbolic-ref --short -q HEAD)" == nightly && -f .tmp/bump ]]; then
+                rm -f .tmp/bump
                 CURRENT_VERSION=$(cat VERSION)
                 NEW_VERSION="${CURRENT_VERSION%%-trunk}"
                 if [[ $CURRENT_VERSION == *trunk* ]]; then
@@ -310,7 +313,7 @@ jobs:
 
     repository:
       name: Update package repository
-      needs: [kernels, edge-stable] 
+      needs: [beta-kernels, edge-stable] 
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for repository
@@ -323,10 +326,35 @@ jobs:
         - name: Update repository
           run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
 
+    beta-images:
+      name: Update beta images
+      needs: [repository]
+      runs-on: [self-hosted, Linux, x64]
+      steps:
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: scripts
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+      steps:
+        - name: Build beta images
+          run: |
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/12000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            sudo ln -sf ../config/targets-cli-beta.conf userpatches/targets.conf
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}"
+            sudo ln -sf ../config/targets-desktop-beta.conf userpatches/targets.conf
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}"
 
     torrents:
       name: Update download infrastructure
-      needs: [kernels, edge-stable, cache]
+      needs: [beta-kernels, edge-stable, cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for torrent
