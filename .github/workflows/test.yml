@@ -226,7 +226,8 @@ jobs:
                 sudo chown -R $USER:$USER .
                 echo "${NEW_VERSION}" > VERSION
                 git add VERSION
-                git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
+                git commit -m "Bumping to new version"
+                # -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
                 git push
               fi
             fi
