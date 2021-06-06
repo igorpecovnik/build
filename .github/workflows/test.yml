@@ -339,7 +339,6 @@ jobs:
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
-      steps:
         - name: Build beta images
           run: |
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/12000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
