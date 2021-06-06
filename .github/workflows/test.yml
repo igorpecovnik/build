@@ -378,7 +378,7 @@ jobs:
 
     torrents:
       name: Update download infrastructure
-      needs: [beta-cli-images, desktop-cli-images, cache]
+      needs: [beta-cli-images, beta-desktop-images, cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for torrent
