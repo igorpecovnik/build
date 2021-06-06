@@ -239,7 +239,6 @@ jobs:
           uses: ad-m/github-push-action@master
           with:
             github_token: ${{ secrets.TEST }}
-            branch: ${{ nightly }}
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
           with:
