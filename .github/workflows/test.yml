@@ -161,7 +161,7 @@ jobs:
             repository: armbian/build
             path: build
             ref: nightly
-            clean: false
+            clean: true
         - name: Checkout Armbian support scripts
           uses: actions/checkout@v2
           with:
@@ -222,12 +222,11 @@ jobs:
                 else
                   NEW_VERSION=$(echo "${CURRENT_VERSION}" | cut -d. -f1-2)"."$((${NEW_VERSION##*.} + 1))
                 fi
-                touch done
-                #echo "ADD"
-                #sudo echo "${NEW_VERSION}" > VERSION
-                #sudo git add VERSION
-                #sudo git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
-                #sudo git push
+                sudo chown -R $USER:$USER .
+                echo "${NEW_VERSION}" > VERSION
+                git add VERSION
+                git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
+                git push
               fi
             fi
         - name: Install SSH key for repository
