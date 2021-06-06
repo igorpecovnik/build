@@ -4,8 +4,8 @@ on:
 
   workflow_dispatch:
 
-  schedule:
-    - cron:  '0 4 * * *'
+#  schedule:
+#    - cron:  '0 4 * * *'
 
 jobs:
 
@@ -13,6 +13,7 @@ jobs:
 
       name: Update CLI beta images
       runs-on: [self-hosted, Linux, x64, big]
+      if: github.ref == 'refs/heads/master'
       steps:
 
         - name: Import GPG key
@@ -40,6 +41,7 @@ jobs:
 
       name: Update desktop beta images
       runs-on: [self-hosted, Linux, x64, big]
+      if: github.ref == 'refs/heads/master'
       steps:
 
         - name: Import GPG key
