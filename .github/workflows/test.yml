@@ -160,6 +160,7 @@ jobs:
             fetch-depth: 0
             repository: armbian/build
             path: build
+            token: ${{ secrets.PAT }}
             ref: nightly
             clean: false
         - name: Checkout Armbian support scripts
