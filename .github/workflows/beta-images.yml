@@ -63,6 +63,25 @@ jobs:
             sudo ln -sf ../config/targets-desktop-beta.conf userpatches/targets.conf
             ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
 
+    torrents:
+
+      name: Update download infrastructure
+      needs: [beta-cli-images, beta-desktop-images]
+      runs-on: [self-hosted, Linux, x64]
+
+      steps:
+
+        - name: Install SSH key for torrent
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            name: id_torrent # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Create torrents
+          run: ssh -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
+
     finish:
       name: Cleaning
       needs: [beta-cli-images, beta-desktop-images]
