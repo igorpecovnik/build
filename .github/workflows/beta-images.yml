@@ -1,4 +1,4 @@
-name: Update Armbian
+name: Build beta images
 
 on:
 
@@ -12,7 +12,6 @@ jobs:
     beta-cli-images:
 
       name: Update CLI beta images
-      needs: [repository, cache]
       runs-on: [self-hosted, Linux, x64, big]
       steps:
 
@@ -40,7 +39,6 @@ jobs:
     beta-desktop-images:
 
       name: Update desktop beta images
-      needs: [repository, cache]
       runs-on: [self-hosted, Linux, x64, big]
       steps:
 
