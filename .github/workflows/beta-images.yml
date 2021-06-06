@@ -84,7 +84,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [beta-cli-images, beta-desktop-images]
+      needs: [torrents]
       runs-on: [self-hosted, Linux, x64, big]
       steps:
         - name: Run script
