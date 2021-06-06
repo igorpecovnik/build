@@ -160,7 +160,7 @@ jobs:
             fetch-depth: 0
             repository: armbian/build
             path: build
-            token: ${{ secrets.PAT }}
+            token: ${{ secrets.TEST }}
             ref: nightly
             clean: false
         - name: Checkout Armbian support scripts
@@ -197,7 +197,7 @@ jobs:
             cd ../scripts/hash-beta
             if git status --porcelain | grep .; then
             git add .
-            git commit -m "Update hashes"
+            git commit -S -m "Update hashes for beta repository"
             git push
             fi
             fi
@@ -233,8 +233,7 @@ jobs:
                 echo "${NEW_VERSION}" > VERSION
                 git status
                 git add VERSION
-                git commit -m "Bumping to new version"
-                # -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
+                git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
                 git push
             fi
         - name: Install SSH key for repository
