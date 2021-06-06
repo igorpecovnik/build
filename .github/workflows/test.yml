@@ -195,10 +195,9 @@ jobs:
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
             cd ../scripts/hash-beta
             if git status --porcelain | grep .; then
-            ECHO "ADD"
-            #git add .
-            #git commit -m "Update hashes"
-            #git push
+            git add .
+            git commit -m "Update hashes"
+            git push
             fi
             fi
         - name: Import GPG key
@@ -223,10 +222,11 @@ jobs:
                 else
                   NEW_VERSION=$(echo "${CURRENT_VERSION}" | cut -d. -f1-2)"."$((${NEW_VERSION##*.} + 1))
                 fi
-                sudo echo "${NEW_VERSION}" > VERSION
-                sudo git add VERSION
-                sudo git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
-                sudo git push
+                echo "ADD"
+                #sudo echo "${NEW_VERSION}" > VERSION
+                #sudo git add VERSION
+                #sudo git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
+                #sudo git push
               fi
             fi
         - name: Install SSH key for repository
