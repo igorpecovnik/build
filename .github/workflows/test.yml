@@ -195,9 +195,10 @@ jobs:
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
             cd ../scripts/hash-beta
             if git status --porcelain | grep .; then
-            git add .
-            git commit -m "Update hashes"
-            git push
+            ECHO "ADD"
+            #git add .
+            #git commit -m "Update hashes"
+            #git push
             fi
             fi
         - name: Import GPG key
