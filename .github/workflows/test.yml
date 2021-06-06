@@ -394,7 +394,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, virtual-arm64, repository, edge-stable, torrents, beta-images]
+      needs: [docker, virtual-arm64, repository, edge-stable, torrents, beta-cli-images, beta-desktop-images]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
