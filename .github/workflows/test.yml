@@ -188,7 +188,7 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             mkdir -p cache/hash-beta
-            sudo rsync -ar --delete cache/hash-beta/* ../scripts/hash-beta/
+            sudo rsync -ar --delete ../scripts/hash-beta/* cache/hash-beta/
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
