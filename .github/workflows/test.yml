@@ -234,9 +234,12 @@ jobs:
                 git add VERSION
                 git commit -m "Bumping to new version"
                 # -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -#name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
-                git push
-                git status
             fi
+        - name: Push changes
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.TEST }}
+            branch: ${{ nightly }}
         - name: Install SSH key for repository
           uses: shimataro/ssh-key-action@v2
           with:
