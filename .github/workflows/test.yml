@@ -188,11 +188,11 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             mkdir -p cache/hash-beta
-            sudo rsync -ar --delete ../scripts/hash-beta/* cache/hash-beta/
+            sudo rsync -ar --delete ../scripts/hash-beta/. cache/hash-beta/
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
-            sudo rsync -ar --delete cache/hash-beta/* ../scripts/hash-beta/
+            sudo rsync -ar --delete cache/hash-beta/. ../scripts/hash-beta/
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
             cd ../scripts/hash-beta
             if git status --porcelain | grep .; then
@@ -283,7 +283,7 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             mkdir -p cache/hash/
-            sudo rsync -ar ../scripts/hash/* cache/hash/
+            sudo rsync -ar ../scripts/hash/. cache/hash/
             sudo cp ../scripts/configs/* userpatches/
             cat config/targets.conf | grep edge | grep cli | grep hirsute | sudo tee userpatches/targets.conf 1>/dev/null 
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
@@ -292,7 +292,7 @@ jobs:
             #find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -fR 2> /dev/null
             rm -f output/debs/armbian-* 2> /dev/null
             rm -f output/debs/linux-libc-* 2> /dev/null
-            sudo rsync -ar cache/hash/* ../scripts/hash/
+            sudo rsync -ar cache/hash/. ../scripts/hash/
         - name: Install SSH key for storage
           uses: shimataro/ssh-key-action@v2
           with:
