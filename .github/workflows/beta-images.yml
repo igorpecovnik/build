@@ -9,7 +9,7 @@ on:
 
 jobs:
 
-    beta-cli-images:
+    beta-cli-images-0:
 
       name: Update CLI beta images
       runs-on: [self-hosted, Linux, x64, big]
@@ -34,10 +34,31 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
-            sudo ln -sf ../config/targets-cli-beta.conf userpatches/targets.conf
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+            # Building chunk 0
+            sudo ln -sf split-0.conf userpatches/targets.conf
+
             ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
 
-    beta-desktop-images:
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            #name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    beta-desktop-images-0:
 
       name: Update desktop beta images
       runs-on: [self-hosted, Linux, x64, big]
@@ -58,12 +79,35 @@ jobs:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
           run: |
             cd build
+
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
-            sudo ln -sf ../config/targets-desktop-beta.conf userpatches/targets.conf
+
+            # split into 6 build chunks
+            cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            # Building chunk 0
+            sudo ln -sf split-0.conf userpatches/targets.conf
+
             ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            #name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
 
     torrents:
 
