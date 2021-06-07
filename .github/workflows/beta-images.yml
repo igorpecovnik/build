@@ -9,11 +9,10 @@ on:
 
 jobs:
 
-    beta-cli-images-0:
+    worker-0:
 
-      name: Update CLI beta images
+      name: CLI worker 0/6
       runs-on: [self-hosted, Linux, x64, big]
-      if: github.ref == 'refs/heads/master'
       steps:
 
         - name: Import GPG key
@@ -29,40 +28,45 @@ jobs:
           env:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
           run: |
+
             cd build
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
             # split into 6 build chunks
             cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
             split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
-            # Building chunk 0
-            sudo ln -sf split-0.conf userpatches/targets.conf
+
+            sudo ln -sf split-0.conf userpatches/targets.conf # Building chunk 0
 
             ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
 
         - name: Install SSH key for storage
           uses: shimataro/ssh-key-action@v2
           with:
+
             key: ${{ secrets.KEY_FOR_TORRENT }}
-            #name: id_rsa # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
+
         - name: Deploy to server
           if: ${{ success() }}
           run: |
+
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/images/
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
 
 
-    beta-desktop-images-0:
+    worker-1:
 
-      name: Update desktop beta images
+      name: CLI worker 1/6
       runs-on: [self-hosted, Linux, x64, big]
-      if: github.ref == 'refs/heads/master'
       steps:
 
         - name: Import GPG key
@@ -78,6 +82,335 @@ jobs:
           env:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
           run: |
+
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-1.conf userpatches/targets.conf # Building chunk 1
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-2:
+
+      name: CLI worker 2/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-2.conf userpatches/targets.conf # Building chunk 2
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-3:
+
+      name: CLI worker 3/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-3.conf userpatches/targets.conf # Building chunk 3
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-4:
+
+      name: CLI worker 4/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-4.conf userpatches/targets.conf # Building chunk 4
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-5:
+
+      name: CLI worker 5/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-5.conf userpatches/targets.conf # Building chunk 5
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+################################################################################################################################################################
+
+
+    worker-6:
+
+      name: Desktop worker 0/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-0.conf userpatches/targets.conf # Building chunk 0
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+
+    worker-7:
+
+      name: Desktop worker 1/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
             cd build
 
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
@@ -85,12 +418,14 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
             # split into 6 build chunks
             cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
             split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
 
-            # Building chunk 0
-            sudo ln -sf split-0.conf userpatches/targets.conf
+            sudo ln -sf split-1.conf userpatches/targets.conf # Building chunk 1
 
             ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
 
@@ -104,6 +439,224 @@ jobs:
         - name: Deploy to server
           if: ${{ success() }}
           run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-8:
+
+      name: Desktop worker 2/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-2.conf userpatches/targets.conf # Building chunk 2
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            #name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-9:
+
+      name: Desktop worker 1/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-3.conf userpatches/targets.conf # Building chunk 3
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            #name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+
+    worker-10:
+
+      name: Desktop worker 1/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-4.conf userpatches/targets.conf # Building chunk 4
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            #name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
+            sudo apt-get -y -qq install lftp
+            sudo chown -R $USER:$USER $(pwd)/build/output/images/
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
+
+
+    worker-11:
+
+      name: Desktop worker 1/6
+      runs-on: [self-hosted, Linux, x64, big]
+      steps:
+
+        - name: Import GPG key
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: build
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Build beta images
+          env:
+            GPG_PASS: ${{ secrets.PASSPHRASE }}
+          run: |
+
+            cd build
+
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
+            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
+            # split into 6 build chunks
+            cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
+
+            sudo ln -sf split-5.conf userpatches/targets.conf # Building chunk 5
+
+            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
+
+        - name: Install SSH key for storage
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.KEY_FOR_TORRENT }}
+            #name: id_rsa # optional
+            known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
+            if_key_exists: replace
+        - name: Deploy to server
+          if: ${{ success() }}
+          run: |
+
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/images/
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
@@ -112,7 +665,7 @@ jobs:
     torrents:
 
       name: Update download infrastructure
-      needs: [beta-cli-images-0, beta-desktop-images-0]
+      needs: [worker-0, worker-1, worker-2, worker-3, worker-4, worker-5, worker-6, worker-7, worker-8, worker-9, worker-10, worker-11]
       runs-on: [self-hosted, Linux, x64]
 
       steps:
