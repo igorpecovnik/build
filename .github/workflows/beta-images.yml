@@ -15,6 +15,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -71,6 +84,19 @@ jobs:
       name: CLI worker 1/6
       runs-on: [self-hosted, Linux, big]
       steps:
+
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
 
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
@@ -129,6 +155,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -185,6 +224,19 @@ jobs:
       name: CLI worker 3/6
       runs-on: [self-hosted, Linux, big]
       steps:
+
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
 
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
@@ -243,6 +295,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -299,6 +364,19 @@ jobs:
       name: CLI worker 5/6
       runs-on: [self-hosted, Linux, big]
       steps:
+
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
 
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
@@ -360,6 +438,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -418,6 +509,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -475,6 +579,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -531,6 +648,19 @@ jobs:
       name: Desktop worker 1/6
       runs-on: [self-hosted, Linux, big]
       steps:
+
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
 
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
@@ -590,6 +720,19 @@ jobs:
       runs-on: [self-hosted, Linux, big]
       steps:
 
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
@@ -646,6 +789,19 @@ jobs:
       name: Desktop worker 1/6
       runs-on: [self-hosted, Linux, big]
       steps:
+
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
 
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
