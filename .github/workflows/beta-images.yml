@@ -43,9 +43,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
-
         - name: Build beta images
           env:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
@@ -125,9 +122,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
-
         - name: Build beta images
           env:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
@@ -208,8 +202,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -291,8 +283,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -374,8 +364,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -457,8 +445,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -543,8 +529,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -568,7 +552,7 @@ jobs:
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
             # split into 6 build chunks
-            cat config/targets-cli-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
+            cat config/targets-desktop-beta.conf | grep -v "^$" | grep -v "^#"  > userpatches/split.conf
             split -d --number=l/6 --additional-suffix=.conf --suffix-length=1 userpatches/split.conf userpatches/split-
 
             sudo ln -sf split-0.conf userpatches/targets.conf # Building chunk 0
@@ -627,8 +611,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -709,8 +691,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -791,8 +771,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -874,8 +852,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -956,8 +932,6 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
-            git-user-signingkey: true
-            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
