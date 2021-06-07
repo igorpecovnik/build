@@ -112,7 +112,7 @@ jobs:
     torrents:
 
       name: Update download infrastructure
-      needs: [beta-cli-images, beta-desktop-images]
+      needs: [beta-cli-images-0, beta-desktop-images-0]
       runs-on: [self-hosted, Linux, x64]
 
       steps:
