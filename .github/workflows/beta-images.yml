@@ -12,7 +12,7 @@ jobs:
     worker-0:
 
       name: CLI worker 0/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -66,7 +66,7 @@ jobs:
     worker-1:
 
       name: CLI worker 1/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -120,7 +120,7 @@ jobs:
     worker-2:
 
       name: CLI worker 2/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -174,7 +174,7 @@ jobs:
     worker-3:
 
       name: CLI worker 3/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -228,7 +228,7 @@ jobs:
     worker-4:
 
       name: CLI worker 4/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -282,7 +282,7 @@ jobs:
     worker-5:
 
       name: CLI worker 5/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -339,7 +339,7 @@ jobs:
     worker-6:
 
       name: Desktop worker 0/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -394,7 +394,7 @@ jobs:
     worker-7:
 
       name: Desktop worker 1/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -448,7 +448,7 @@ jobs:
     worker-8:
 
       name: Desktop worker 2/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -502,7 +502,7 @@ jobs:
     worker-9:
 
       name: Desktop worker 1/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -557,7 +557,7 @@ jobs:
     worker-10:
 
       name: Desktop worker 1/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -611,7 +611,7 @@ jobs:
     worker-11:
 
       name: Desktop worker 1/6
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
 
         - name: Import GPG key
@@ -666,7 +666,7 @@ jobs:
 
       name: Update download infrastructure
       needs: [worker-0, worker-1, worker-2, worker-3, worker-4, worker-5, worker-6, worker-7, worker-8, worker-9, worker-10, worker-11]
-      runs-on: [self-hosted, Linux, x64]
+      runs-on: [self-hosted, Linux]
 
       steps:
 
@@ -684,7 +684,7 @@ jobs:
     finish:
       name: Cleaning
       needs: [torrents]
-      runs-on: [self-hosted, Linux, x64, big]
+      runs-on: [self-hosted, Linux, big]
       steps:
         - name: Run script
           shell: bash {0}
