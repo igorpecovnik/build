@@ -35,6 +35,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -88,6 +91,9 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # cleaning leftovers if any
+            rm -rf output/images/*
 
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
@@ -143,6 +149,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -196,6 +205,9 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # cleaning leftovers if any
+            rm -rf output/images/*
 
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
@@ -251,6 +263,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -304,6 +319,9 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # cleaning leftovers if any
+            rm -rf output/images/*
 
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
@@ -362,6 +380,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -418,6 +439,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -472,6 +496,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -525,6 +552,9 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # cleaning leftovers if any
+            rm -rf output/images/*
 
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
@@ -581,6 +611,9 @@ jobs:
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # cleaning leftovers if any
+            rm -rf output/images/*
+
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
@@ -634,6 +667,9 @@ jobs:
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+
+            # cleaning leftovers if any
+            rm -rf output/images/*
 
             # make sure you have latest rootfs packs
             rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
