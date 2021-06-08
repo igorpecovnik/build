@@ -396,7 +396,7 @@ jobs:
 
       name: Update package repository
       needs: [beta-kernels, edge-stable] 
-      runs-on: [self-hosted, Linux]
+      runs-on: [self-hosted, Linux, small]
 
       steps:
 
