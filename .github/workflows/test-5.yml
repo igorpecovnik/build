@@ -11,8 +11,8 @@ on:
 #    - cron:  '0 */3 * * *'
 
 # test cron every 30 minutes
-#   schedule:
-#     - cron:  '*/30 * * * *'
+   schedule:
+     - cron:  '*/30 * * * *'
 
 jobs:
 
@@ -233,6 +233,7 @@ jobs:
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
               cd ../scripts/hash-beta
               if git status --porcelain | grep .; then
+                git pull
                 git add .
                 git commit -m "Update hashes for beta repository"
                 git push
@@ -271,6 +272,7 @@ jobs:
 
                 sudo git checkout -f
                 sudo chown -R $USER:$USER .
+                git pull
                 echo "${NEW_VERSION}" > VERSION
                 git add VERSION
                 git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
@@ -367,6 +369,7 @@ jobs:
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
             cd ../scripts/hash
             if git status --porcelain | grep .; then
+              git pull
               git add .
               git commit -m "Update hashes for stable repository"
               git push
