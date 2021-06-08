@@ -14,3 +14,12 @@ Common tags:
 # Preparing GPG
 
 use gpg1 otherwise signing fails
+
+# Preparing Runner
+
+- make sure to choose proper architecture
+- create startup
+
+    sudo ./svc.sh install # install
+    sudo ./svc.sh start   # start
+    sudo ./svc.sh status  # check
