@@ -1,6 +1,8 @@
 name: Update Armbian v3
 
 on:
+  schedule:
+     - cron:  '*/30 * * * *'
 
   workflow_dispatch:
 
@@ -9,10 +11,6 @@ on:
 
 #  schedule:
 #    - cron:  '0 */3 * * *'
-
-# test cron every 30 minutes
-   schedule:
-     - cron:  '*/30 * * * *'
 
 jobs:
 
