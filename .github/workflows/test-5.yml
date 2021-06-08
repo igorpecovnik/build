@@ -51,8 +51,7 @@ jobs:
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
             rm -rf output/images/*
-            # make sure you have latest rootfs packs
-            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+#            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
             sudo mkdir -p userpatches
             sudo cp ../scripts/configs/* userpatches/
@@ -70,8 +69,6 @@ jobs:
           with:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
-            #git-user-signingkey: true
-            #git-commit-gpgsign: true
 
         - name: Sign commit and push changes
 
@@ -87,20 +84,20 @@ jobs:
                 fi
             done) | parallel --jobs 32 'echo '${PASSPHRASE}' | sudo gpg --passphrase-fd 0 --armor --detach-sign --pinentry-mode loopback --batch --yes {}'
 
-        - name: Install SSH key for storage
-
-          uses: shimataro/ssh-key-action@v2
-          with:
-            key: ${{ secrets.KEY_FOR_TORRENT }}
-            known_hosts: ${{ secrets.KNOWN_HOSTS_UPLOAD }}
-            if_key_exists: replace
-
-        - name: Upload artefacts
-          if: ${{ success() }}
-          run: |
-            sudo apt-get -y -qq install lftp
-            sudo chown -R $USER:$USER $(pwd)/build/cache/rootfs/
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --delete --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/cache/rootfs/ rootfs/ ;bye" sftp://users.armbian.com
+#        - name: Install SSH key for storage
+#
+#          uses: shimataro/ssh-key-action@v2
+#          with:
+#            key: ${{ secrets.KEY_FOR_TORRENT }}
+#            known_hosts: ${{ secrets.KNOWN_HOSTS_UPLOAD }}
+#            if_key_exists: replace
+#
+#        - name: Upload artefacts
+#          if: ${{ success() }}
+#          run: |
+#            sudo apt-get -y -qq install lftp
+#            sudo chown -R $USER:$USER $(pwd)/build/cache/rootfs/
+#            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror -R --delete --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/cache/rootfs/ rootfs/ ;bye" sftp://users.armbian.com
 
 
     docker:
