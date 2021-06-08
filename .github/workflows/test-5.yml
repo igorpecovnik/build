@@ -175,8 +175,8 @@ jobs:
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
-            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.PASSPHRASE }}
+            gpg-private-key: ${{ secrets.GPG_WORKER }}
+            #passphrase: ${{ secrets.PASSPHRASE }}
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
@@ -205,8 +205,8 @@ jobs:
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
-            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.PASSPHRASE }}
+            gpg-private-key: ${{ secrets.GPG_WORKER }}
+            #passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
             git-user-signingkey: true
             git-commit-gpgsign: true
@@ -281,8 +281,8 @@ jobs:
         - name: Import GPG key
           uses: crazy-max/ghaction-import-gpg@v3
           with:
-            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.PASSPHRASE }}
+            gpg-private-key: ${{ secrets.GPG_WORKER }}
+            #passphrase: ${{ secrets.PASSPHRASE }}
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
@@ -343,59 +343,9 @@ jobs:
         - name: Update repository
           run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
 
-    beta-cli-images:
-      name: Update CLI beta images
-      needs: [repository, cache]
-      runs-on: [self-hosted, Linux, x64, big]
-      steps:
-        - name: Import GPG key
-          uses: crazy-max/ghaction-import-gpg@v3
-          with:
-            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.PASSPHRASE }}
-            workdir: scripts
-            git-user-signingkey: true
-            git-commit-gpgsign: true
-        - name: Build beta images
-          env:
-            GPG_PASS: ${{ secrets.PASSPHRASE }}
-          run: |
-            cd build
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
-            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
-            sudo ln -sf ../config/targets-cli-beta.conf userpatches/targets.conf
-            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
-
-    beta-desktop-images:
-      name: Update desktop beta images
-      needs: [repository, cache]
-      runs-on: [self-hosted, Linux, x64, big]
-      steps:
-        - name: Import GPG key
-          uses: crazy-max/ghaction-import-gpg@v3
-          with:
-            gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.PASSPHRASE }}
-            workdir: scripts
-            git-user-signingkey: true
-            git-commit-gpgsign: true
-        - name: Build beta images
-          env:
-            GPG_PASS: ${{ secrets.PASSPHRASE }}
-          run: |
-            cd build
-            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
-            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            PARALLEL_BUILDS=$(awk '{printf("%d",$1/10000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
-            sudo ln -sf ../config/targets-desktop-beta.conf userpatches/targets.conf
-            ./compile.sh all-new-beta-images MULTITHREAD="${PARALLEL_BUILDS}" GPG_PASS="${GPG_PASS}"
-
     torrents:
       name: Update download infrastructure
-      needs: [beta-cli-images, beta-desktop-images, cache]
+      needs: [cache]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Install SSH key for torrent
@@ -411,7 +361,7 @@ jobs:
 
     finish:
       name: Cleaning
-      needs: [docker, virtual-arm64, repository, edge-stable, torrents, beta-cli-images, beta-desktop-images]
+      needs: [docker, virtual-arm64, repository, edge-stable, torrents]
       runs-on: [self-hosted, Linux, x64]
       steps:
         - name: Run script
