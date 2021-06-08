@@ -225,9 +225,13 @@ jobs:
             sudo cp ../scripts/configs/* userpatches/
             sudo rm -f userpatches/targets.conf
             ./compile.sh all-new-beta-kernels
+            cd ../scripts
+            sudo git clean -ffdx && git reset --hard HEAD
+            cd ../build
             sudo rsync -ar --delete cache/hash-beta/. ../scripts/hash-beta/
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
-              cd ../scripts/hash-beta
+              cd ../scripts/
+              sudo chown -R $USER:$USER .
               if git status --porcelain | grep .; then
                 git pull
                 git add .
