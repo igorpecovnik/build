@@ -48,6 +48,10 @@ jobs:
           run: |
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
+            rm -rf output/images/*
+            # make sure you have latest rootfs packs
+            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+
             sudo mkdir -p userpatches
             sudo cp ../scripts/configs/* userpatches/
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
