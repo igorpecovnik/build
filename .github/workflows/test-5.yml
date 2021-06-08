@@ -259,7 +259,7 @@ jobs:
             cd build
             if [[ "$(git symbolic-ref --short -q HEAD)" == nightly && -f .tmp/bump ]]; then
 
-                rm -f .tmp/bump
+                sudo rm -f .tmp/bump
                 CURRENT_VERSION=$(cat VERSION)
                 NEW_VERSION="${CURRENT_VERSION%%-trunk}"
 
