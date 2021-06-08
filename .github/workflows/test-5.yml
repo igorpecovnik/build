@@ -176,7 +176,7 @@ jobs:
           uses: crazy-max/ghaction-import-gpg@v3
           with:
             gpg-private-key: ${{ secrets.GPG_WORKER }}
-            #passphrase: ${{ secrets.PASSPHRASE }}
+            passphrase: ${{ secrets.PASSPHRASE }}
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
@@ -206,7 +206,7 @@ jobs:
           uses: crazy-max/ghaction-import-gpg@v3
           with:
             gpg-private-key: ${{ secrets.GPG_WORKER }}
-            #passphrase: ${{ secrets.PASSPHRASE }}
+            passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
             git-user-signingkey: true
             git-commit-gpgsign: true
@@ -282,7 +282,7 @@ jobs:
           uses: crazy-max/ghaction-import-gpg@v3
           with:
             gpg-private-key: ${{ secrets.GPG_WORKER }}
-            #passphrase: ${{ secrets.PASSPHRASE }}
+            passphrase: ${{ secrets.PASSPHRASE }}
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
