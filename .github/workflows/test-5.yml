@@ -363,9 +363,9 @@ jobs:
             sudo sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
             ./compile.sh all-new-stable-kernels
             # upgrade only kernel packages
-            #find output/debs -mindepth 1 -maxdepth 1 -type d -print0  | xargs -0 rm -fR 2> /dev/null
             rm -f output/debs/armbian-* 2> /dev/null
             rm -f output/debs/linux-libc-* 2> /dev/null
+            find output/debs -mindepth 1 -maxdepth 1 -type d -print0 | xargs -0 sudo rm -R 2> /dev/null
             sudo rsync -ar --delete cache/hash/. ../scripts/hash/
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
             cd ../scripts/hash
