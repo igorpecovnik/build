@@ -407,7 +407,7 @@ jobs:
 
         - name: Update repository
 
-          run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
+          run: ssh -T -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
 
     torrents:
 
@@ -432,7 +432,7 @@ jobs:
 
         - name: Create torrents
 
-          run: ssh -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
+          run: ssh -T -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
 
 
     finish:
