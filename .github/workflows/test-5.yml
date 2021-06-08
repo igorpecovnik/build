@@ -99,6 +99,7 @@ jobs:
 
           run: |
 
+            cd build
             sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             touch .ignore_changes
             ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
@@ -130,8 +131,8 @@ jobs:
 
           run: |
 
-            sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
+            sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
