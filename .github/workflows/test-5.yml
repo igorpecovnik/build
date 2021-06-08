@@ -51,7 +51,7 @@ jobs:
             echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
             cd build
             rm -rf output/images/*
-#            rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
+            # rsync -avr rsync://mirrors.dotsrc.org/armbian-dl/_rootfs/. cache/rootfs
 
             sudo mkdir -p userpatches
             sudo cp ../scripts/configs/* userpatches/
