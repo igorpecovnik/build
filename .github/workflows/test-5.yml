@@ -17,7 +17,7 @@ jobs:
     cache:
 
       name: Create rootfs cache
-      runs-on: [self-hosted, Linux, x64, middle]
+      runs-on: [self-hosted, Linux, x64, cache]
 
       steps:
 

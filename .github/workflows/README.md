@@ -5,11 +5,11 @@ Common tags:
 - self-hosted
 - Linux
 - X64
-
-Types:
-
-- big   = 16+ cores
-- small = < 16 cores
+- ARM64
+- local (local network)
+- cache (mounted cache)
+- big (16+ cores and 64Gb+ memory)
+- small (< 16 cores and 64Gb+ memory)
 
 # Preparing GPG
 
