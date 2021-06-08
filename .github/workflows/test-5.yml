@@ -352,7 +352,7 @@ jobs:
 
           run: |
             cd build
-            rm -rf output/debs-beta/*
+            rm -rf output/debs/*
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             REPOSITORY_INSTALL="kernel" 'prepare_host'
