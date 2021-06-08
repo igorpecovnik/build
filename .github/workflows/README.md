@@ -20,6 +20,6 @@ use gpg1 otherwise signing fails
 - make sure to choose proper architecture
 - create startup
 
-    sudo ./svc.sh install # install
-    sudo ./svc.sh start   # start
-    sudo ./svc.sh status  # check
+        sudo ./svc.sh install # install
+        sudo ./svc.sh start   # start
+        sudo ./svc.sh status  # check
