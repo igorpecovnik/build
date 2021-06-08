@@ -134,6 +134,7 @@ jobs:
             touch .ignore_changes
             ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
 
 
     docker-arm64:
@@ -166,7 +167,7 @@ jobs:
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh dockerpurge KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-
+            sed -i "s/-it --rm/-i --rm/" userpatches/config-docker.conf
 
     beta-kernels:
 
