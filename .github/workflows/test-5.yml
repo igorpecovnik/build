@@ -97,6 +97,11 @@ jobs:
 
     beta-kernels:
 
+      #
+      # Whenever kernel sources, patches or config are changed, we rebuild kernels + BSP and push
+      # them to https://beta.armbian.com repository.
+      #
+
       name: Changed beta kernels
       runs-on: [self-hosted, Linux, x64]
 
@@ -142,6 +147,7 @@ jobs:
 
           run: |
             cd build
+            rm -rf output/debs-beta/*
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
             REPOSITORY_INSTALL="u-boot,kernel" 'prepare_host'
@@ -159,14 +165,7 @@ jobs:
                 git push
               fi
             fi
-#        - name: Import GPG key
-#          uses: crazy-max/ghaction-import-gpg@v3
-#          with:
-#            gpg-private-key: ${{ secrets.GPG_WORKER }}
-#            passphrase: ${{ secrets.PASSPHRASE }}
-#            workdir: build
-#            git-user-signingkey: true
-#            git-commit-gpgsign: true
+
         - name: Make BSP packages
 
           if: ${{ success() }}
@@ -186,20 +185,24 @@ jobs:
           run: |
             cd build
             if [[ "$(git symbolic-ref --short -q HEAD)" == nightly && -f .tmp/bump ]]; then
+
                 rm -f .tmp/bump
                 CURRENT_VERSION=$(cat VERSION)
                 NEW_VERSION="${CURRENT_VERSION%%-trunk}"
+
                 if [[ $CURRENT_VERSION == *trunk* ]]; then
                   NEW_VERSION=$(echo "${CURRENT_VERSION}" | cut -d. -f1-3)"."$((${NEW_VERSION##*.} + 1))
                 else
                   NEW_VERSION=$(echo "${CURRENT_VERSION}" | cut -d. -f1-2)"."$((${NEW_VERSION##*.} + 1))
                 fi
+
                 sudo git checkout -f
                 sudo chown -R $USER:$USER .
                 echo "${NEW_VERSION}" > VERSION
                 git add VERSION
                 git commit -m "Bumping to new version" -m "" -m "Adding following kernels:" -m "$(find output/debs-beta/ -type f -name "linux-image*${CURRENT_VERSION}*.deb" -printf "%f\n" | sort)"
                 git push
+
             fi
 
         - name: Install SSH key for repository
@@ -207,7 +210,6 @@ jobs:
           uses: shimataro/ssh-key-action@v2
           with:
             key: ${{ secrets.KEY_FOR_TORRENT }}
-            #name: id_rsa # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
 
@@ -216,19 +218,32 @@ jobs:
           if: ${{ success() }}
 
           run: |            
+
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs-beta/ debs-beta/ ;bye" sftp://users.armbian.com
 
 
     edge-stable:
+
+      #
+      # Whenever edge kernel sources, patches or config are changed, we rebuild kernels + BSP and push
+      # them to https://beta.armbian.com repository.
+      #
+      # EDGE kernel sources are most recent mainline based
+      #
+
       name: Changed stable edge kernels
       runs-on: [self-hosted, Linux, x64]
+
       steps:
+
         - name: Fix permissions
           run: |
             sudo chown -R $USER:$USER .
+
         - name: Checkout Armbian build script
+
           uses: actions/checkout@v2
           with:
             fetch-depth: 0
@@ -236,15 +251,19 @@ jobs:
             path: build
             ref: nightly
             clean: false
+
         - name: Checkout Armbian support scripts
+
           uses: actions/checkout@v2
           with:
             fetch-depth: 0
             repository: armbian/scripts
             token: ${{ secrets.PAT }}
             path: scripts
-            clean: false
+            clean: true
+
         - name: Import GPG key
+
           uses: crazy-max/ghaction-import-gpg@v3
           with:
             gpg-private-key: ${{ secrets.GPG_WORKER }}
@@ -252,14 +271,15 @@ jobs:
             workdir: scripts
             git-user-signingkey: true
             git-commit-gpgsign: true
+
         - name: Build all edge changed kernels for stable repository
+
           run: |
-            echo "BLTPATH=\"$(pwd)/build/\"" | tee scripts/cacherebuild.conf scripts/betarepository.conf >/dev/null
-            sudo sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
+            rm -rf output/debs-beta/*
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" \
-            USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
+            REPOSITORY_INSTALL="kernel" 'prepare_host'
             mkdir -p cache/hash/
             sudo rsync -ar --delete ../scripts/hash/. cache/hash/
             sudo cp ../scripts/configs/* userpatches/
@@ -279,58 +299,84 @@ jobs:
               git push
             fi
             fi
+
         - name: Install SSH key for storage
+
           uses: shimataro/ssh-key-action@v2
           with:
             key: ${{ secrets.KEY_FOR_TORRENT }}
-            #name: id_rsa # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
+
         - name: Deploy to server
+
           if: ${{ success() }}
+
           run: |
+
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/debs-beta/
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ debs/ ;bye" sftp://users.armbian.com
 
 
     repository:
+
+      #
+      # Rebuild package repository
+      #
+
       name: Update package repository
       needs: [beta-kernels, edge-stable] 
       runs-on: [self-hosted, Linux, x64]
+
       steps:
+
         - name: Install SSH key for repository
+
           uses: shimataro/ssh-key-action@v2
           with:
             key: ${{ secrets.KEY_FOR_REPOSITORY }}
             name: id_repository # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_REPOSITORY }}
             if_key_exists: replace
+
         - name: Update repository
+
           run: ssh -i ~/.ssh/id_repository ${{ secrets.USER_REPOSITORY }}@${{ secrets.SSH_HOST }}
 
     torrents:
+
+      #
+      # Rebuilt torrent files for rootfs cache
+      #
+
       name: Update download infrastructure
       needs: [cache]
       runs-on: [self-hosted, Linux, x64]
+
       steps:
+
         - name: Install SSH key for torrent
+
           uses: shimataro/ssh-key-action@v2
           with:
             key: ${{ secrets.KEY_FOR_TORRENT }}
             name: id_torrent # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
+
         - name: Create torrents
+
           run: ssh -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
 
 
     finish:
+
       name: Cleaning
       needs: [docker, repository, edge-stable, torrents]
       runs-on: [self-hosted, Linux, x64]
-      steps:
-        - name: Run script
-          shell: bash {0}
-          run: |
-            echo "xxxx"
+#      steps:
+#        - name: Run script
+#          shell: bash {0}
+#          run: |
+#            echo "xxxx"
