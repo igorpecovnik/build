@@ -372,11 +372,12 @@ jobs:
 
     finish:
 
-      name: Cleaning
+      name: Finish
       needs: [docker, repository, edge-stable, torrents]
       runs-on: [self-hosted, Linux, x64]
-#      steps:
-#        - name: Run script
-#          shell: bash {0}
-#          run: |
-#            echo "xxxx"
+
+      steps:
+
+        - name: Run script
+          run: |
+            echo "Finish"
