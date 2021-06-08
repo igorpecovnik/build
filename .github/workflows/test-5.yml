@@ -245,10 +245,10 @@ jobs:
 
           run: |
             cd build
-            rm -f .tmp/bump
+            sudo rm -f .tmp/bump
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
               ./compile.sh all-new-beta-bsp
-              touch .tmp/bump
+              sudo touch .tmp/bump
             fi
 
         - name: Bump version
