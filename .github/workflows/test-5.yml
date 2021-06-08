@@ -107,7 +107,7 @@ jobs:
     docker-arm64:
 
       name: Docker image on arm64
-      runs-on: [self-hosted, Linux, ARM64]
+      runs-on: [self-hosted, Linux, ARM64, small]
 
       steps:
 
@@ -414,7 +414,7 @@ jobs:
     finish:
 
       name: Finish
-      needs: [docker, repository, edge-stable, torrents]
+      needs: [repository, edge-stable, torrents]
       runs-on: [self-hosted, Linux, small]
 
       steps:
