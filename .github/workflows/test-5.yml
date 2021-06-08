@@ -402,7 +402,7 @@ jobs:
 
       name: Update package repository
       needs: [beta-kernels, edge-stable] 
-      runs-on: [self-hosted, Linux, small]
+      runs-on: [self-hosted, Linux, local]
 
       steps:
 
@@ -427,7 +427,7 @@ jobs:
 
       name: Update download infrastructure
       needs: [cache]
-      runs-on: [self-hosted, Linux, small]
+      runs-on: [self-hosted, Linux, local]
 
       steps:
 
