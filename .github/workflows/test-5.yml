@@ -310,7 +310,6 @@ jobs:
       #
 
       name: Changed stable edge kernels
-      needs: [beta-kernels]
       runs-on: [self-hosted, Linux, x64, big]
 
       steps:
