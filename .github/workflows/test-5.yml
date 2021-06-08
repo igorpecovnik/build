@@ -77,7 +77,7 @@ jobs:
     docker:
 
       name: Docker image on x86
-      runs-on: [self-hosted, Linux, x64, small]
+      runs-on: [self-hosted, Linux, x64]
       steps:
 
         - name: Fix permissions
