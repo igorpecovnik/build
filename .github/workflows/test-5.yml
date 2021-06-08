@@ -11,8 +11,8 @@ on:
 #    - cron:  '0 */3 * * *'
 
 # test cron every 30 minutes
-   schedule:
-     - cron:  '*/30 * * * *'
+#   schedule:
+#     - cron:  '*/30 * * * *'
 
 jobs:
 
