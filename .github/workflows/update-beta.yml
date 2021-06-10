@@ -1,0 +1,56 @@
+name: Update beta
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+    merge:
+
+      name: Merge nightly
+      runs-on: ubuntu-latest
+
+      steps:
+
+        - name: Checkout Armbian build script
+
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+
+        - name: Import GPG key
+
+          uses: crazy-max/ghaction-import-gpg@v3
+          with:
+            gpg-private-key: ${{ secrets.GPG_WORKER }}
+            passphrase: ${{ secrets.PASSPHRASE }}
+            workdir: scripts
+            git-user-signingkey: true
+            git-commit-gpgsign: true
+
+        - name: Merge master into nightly
+
+          run: |
+
+            git checkout master
+            git fetch
+            git merge origin/master
+            git checkout nightly
+            git merge master nightly
+            git push
+
+    finish:
+
+      name: Finish
+      needs: merge
+      runs-on: ubuntu-latest
+
+      steps:
+
+        - name: Run script
+          run: |
+            echo "Finish"
