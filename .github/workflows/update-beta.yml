@@ -36,6 +36,7 @@ jobs:
 
           run: |
 
+            cd build
             git checkout master
             git fetch
             git merge origin/master
