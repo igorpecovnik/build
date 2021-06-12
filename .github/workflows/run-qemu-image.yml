@@ -1,0 +1,50 @@
+name: Build beta images
+
+on:
+
+  workflow_dispatch:
+
+jobs:
+
+    virtual-arm64:
+      name: Virtual image on arm64
+      needs: [docker-arm64]
+      runs-on: [self-hosted, Linux, ARM64, igor]
+      steps:
+        - name: Fix permissions
+          run: |
+            sudo chown -R $USER:$USER .
+        - name: Checkout Armbian build script
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            repository: armbian/build
+            path: build
+            ref: nightly
+            clean: false
+        - name: Build Docker image
+          run: |
+            sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh docker \
+            KERNEL_ONLY="yes" \
+            BOARD="virtual-qemu" \
+            BRANCH="current" \
+            KERNEL_CONFIGURE="no" \
+            KERNEL_ONLY="no" \
+            RELEASE="focal" \
+            BUILD_DESKTOP="no" \
+            BUILD_MINIMAL="no" \
+            BETA="yes" \
+            REPOSITORY_INSTALL="u-boot,kernel,armbian-config,armbian-firmware"
+            TEMPDIR=$(mktemp)
+            dpkg-deb -X output/debs-beta/linux-u-boot-virtual-qemu* ${TEMPDIR}
+            source ${TEMPDIR}/usr/lib/u-boot/platform_install.sh
+            cp ${TEMPDIR}${DIR}u-boot.bin .
+            qemu-img convert -f raw -O qcow2 output/images/Armbian*.img armbian.qcow2
+            qemu-img resize armbian.qcow2 +4G
+            smp=4
+            rams=2000M
+            bios=u-boot.bin
+            qemu-system-aarch64 -name ArmbianVirtualTest -m ${rams} -smp ${smp} -drive file=armbian.qcow2 -nographic -enable-kvm -M virt -cpu host -bios ${bios} -netdev user,id=user.0,hostfwd=udp::31783-:22,hostfwd=tcp::31783-:22 -device virtio-net,netdev=user.0 -machine gic-version=2
