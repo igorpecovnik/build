@@ -25,6 +25,18 @@ jobs:
           run: |
             sed -i "s/-it --rm/-i --rm/" build/config/templates/config-docker.conf
             cd build
+            
+            while :
+            do
+                sudo pkill compile.sh 
+                sudo pkill arm-binfmt-P
+                sudo pkill aarch64-binfmt-P
+                [[ "$(df | grep '.tmp' | wc -l)" -eq 0 ]] && rm -rf .tmp && break
+                echo "Mounted temp directories. Trying to unmount."
+                df | grep ".tmp" | awk '{print $6}' | xargs sudo umount 2>/dev/null
+                sleep 10
+            done
+            
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh docker \
             KERNEL_ONLY="yes" \
