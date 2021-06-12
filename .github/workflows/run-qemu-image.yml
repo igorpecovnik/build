@@ -1,4 +1,4 @@
-name: Build beta images
+name: Build & run qemu image
 
 on:
 
@@ -37,7 +37,7 @@ jobs:
             BUILD_MINIMAL="no" \
             BETA="yes" \
             REPOSITORY_INSTALL="u-boot,kernel,armbian-config,armbian-firmware"
-            TEMPDIR=$(mktemp)
+            TEMPDIR=$(mktemp -d)
             dpkg-deb -X output/debs-beta/linux-u-boot-virtual-qemu* ${TEMPDIR}
             source ${TEMPDIR}/usr/lib/u-boot/platform_install.sh
             cp ${TEMPDIR}${DIR}u-boot.bin .
