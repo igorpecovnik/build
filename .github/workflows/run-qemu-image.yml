@@ -8,7 +8,6 @@ jobs:
 
     virtual-arm64:
       name: Virtual image on arm64
-      needs: [docker-arm64]
       runs-on: [self-hosted, Linux, ARM64, igor]
       steps:
         - name: Fix permissions
