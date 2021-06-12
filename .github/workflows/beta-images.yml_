@@ -12,11 +12,12 @@ jobs:
     worker-0:
 
       name: CLI worker 0/6
-      runs-on: [self-hosted, Linux, big]
+      runs-on: [self-hosted, Linux, cache]
       steps:
 
         - name: Fix permissions
           run: |
+
             sudo chown -R $USER:$USER .
 
         - name: Checkout Armbian build script
