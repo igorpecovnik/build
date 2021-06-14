@@ -8,7 +8,7 @@ on:
         description: 'Comma delimited list'
         required: true
         default: 'bananapi'
-      packages:
+      repository:
         description: 'Packages from repository'
         required: true
         default: 'yes'
