@@ -62,7 +62,9 @@ jobs:
           with:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
-            workdir: build
+            workdir: scripts
+            git-user-signingkey: true
+            git-commit-gpgsign: true
 
         - name: Build beta images
           env:
@@ -111,7 +113,7 @@ jobs:
 
         - name: Bump stable version
 
-          #if: ${{ success() && github.event.inputs.repository != 'yes' }}
+          if: ${{ success() && github.event.inputs.repository != 'yes' }}
 
           run: |
 
@@ -143,7 +145,7 @@ jobs:
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/images/
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
-            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ images/ ;bye" sftp://users.armbian.com
+            [[ "${REPOSITORY}" != "yes" ]] && lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ images/ ;bye" sftp://users.armbian.com
 
     torrents:
 
