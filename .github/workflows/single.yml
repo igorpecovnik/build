@@ -72,6 +72,10 @@ jobs:
           run: |
 
             cd build
+           
+            echo "IMa $REBUILD_IMAGES"
+            echo "Rep $REPOSITORY"
+
             #[[ "${REPOSITORY}" == "true" ]] && 
             REPOSITORY_INSTALL="u-boot,kernel,armbian-config,armbian-zsh,armbian-firmware"
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
