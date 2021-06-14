@@ -111,14 +111,16 @@ jobs:
 
         - name: Bump stable version
 
-          if: ${{ success() }} && github.even.input.repository != 'yes'
+          #if: ${{ success() && github.event.inputs.repository != 'yes' }}
 
           run: |
 
             cd scripts
             sudo git clean -ffdx && git reset --hard HEAD
             git config pull.rebase false
-            echo $(cat VERSION | cut -d. -f1,2)"."$((${$(cat VERSION)##*.} + 1)) > VERSION
+            VERSION=$(cat VERSION | cut -d. -f1,2)
+            PATCH=$(cat VERSION | cut -d. -f3,3)
+            echo $VERSION"."$(($PATCH + 1)) | tee VERSION
             git pull
             git add VERSION
             git commit -m "Bump stable version"
