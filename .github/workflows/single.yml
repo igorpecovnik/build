@@ -1,5 +1,4 @@
 name: Single image update
-  description: 'xComma delimited list'
 
 on:
 
