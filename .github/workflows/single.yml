@@ -1,4 +1,4 @@
-name: Single image update
+name: Update images
 
 on:
 
@@ -8,9 +8,6 @@ on:
         description: 'Comma delimited list'
         required: true
         default: 'bananapi'
-      version:
-        description: 'V'
-        required: false
 
 jobs:
 
@@ -49,6 +46,7 @@ jobs:
             gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.PASSPHRASE }}
             workdir: build
+
         - name: Build beta images
           env:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
@@ -86,6 +84,21 @@ jobs:
               ./compile.sh all-new-stable-bsp
               sudo touch .tmp/bump
             fi
+
+        - name: Bump version
+
+          if: ${{ success() }}
+
+          run: |
+
+            cd ../scripts/
+            sudo git clean -ffdx && git reset --hard HEAD
+            git config pull.rebase false
+            echo $(cat VERSION | cut -d. -f1,2)"."$((${$(cat VERSION)##*.} + 1)) > VERSION
+            git pull
+            git add VERSION
+            git commit -m "Bump stable version"
+            git push
 
         - name: Install SSH key for storage
           uses: shimataro/ssh-key-action@v2
