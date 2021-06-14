@@ -13,7 +13,7 @@ jobs:
 
     prepare:
 
-      name: Stable image(s) and repository update
+      name: Build images from sources
       runs-on: [self-hosted, Linux, X64]
       steps:
 
@@ -57,7 +57,7 @@ jobs:
 
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
-            PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
+            PARALLEL_BUILDS=$(awk '{printf("%d",$1/8000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
             # use prepared configs
             sudo cp ../scripts/configs/* userpatches/
@@ -85,7 +85,7 @@ jobs:
               sudo touch .tmp/bump
             fi
 
-        - name: Bump version
+        - name: Bump stable version
 
           if: ${{ success() }}
 
