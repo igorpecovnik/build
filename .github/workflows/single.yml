@@ -95,7 +95,7 @@ jobs:
             [[ "${REPOSITORY}" != "yes" ]] && ./compile.sh single IGNORE_HASH="yes" REPOSITORY_INSTALL="${REPOSITORY_INSTALL}" REBUILD_IMAGES="${REBUILD_IMAGES}" KERNEL_ONLY="yes" BETA="no" BUILD_ALL="yes" BSP_BUILD="yes" MAKE_ALL_BETA="yes"
             ./compile.sh single MULTITHREAD="${PARALLEL_BUILDS}" REPOSITORY_INSTALL="${REPOSITORY_INSTALL}" IGNORE_HASH="yes" IGNORE_UPDATES="yes" REBUILD_IMAGES="${REBUILD_IMAGES}" KERNEL_ONLY="no" BETA="no" BUILD_ALL="yes" GPG_PASS="${GPG_PASS}"
 
-        - name: Make BSP packages
+        - name: Make BSP packages if we build from sources
 
           if: ${{ success() && github.event.inputs.repository != 'yes' }}
 
@@ -108,7 +108,7 @@ jobs:
               sudo touch .tmp/bump
             fi
 
-        - name: Bump stable version
+        - name: Bump stable version if we build from sources
 
           if: ${{ success() && github.event.inputs.repository != 'yes' }}
 
@@ -135,16 +135,20 @@ jobs:
             known_hosts: ${{ secrets.KNOWN_HOSTS_TORRENT }}
             if_key_exists: replace
 
-        - name: Deploy to server
-          env:
-            REPOSITORY:      ${{ github.event.inputs.repository }}
+        - name: Deploy images to server
           if: ${{ success() }}
           run: |
 
             sudo apt-get -y -qq install lftp
             sudo chown -R $USER:$USER $(pwd)/build/output/images/
             lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/images/ images/ ;bye" sftp://users.armbian.com
-            [[ "${REPOSITORY}" != "yes" ]] && lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ images/ ;bye" sftp://users.armbian.com
+
+        - name: Deploy packages to server
+          if: ${{ success() && github.event.inputs.repository != 'yes' }}
+
+          run: |
+
+            lftp -u upload, -e "set net:timeout 4;set net:max-retries 6;mirror --Remove-source-files -R --no-empty-dirs --parallel=8 --no-perms $(pwd)/build/output/debs/ images/ ;bye" sftp://users.armbian.com
 
     torrents:
 
