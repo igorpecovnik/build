@@ -1,14 +1,17 @@
 name: Single image update
+  description: 'xComma delimited list'
 
 on:
 
   workflow_dispatch:
     inputs:
       boards:
-        description: 'Comma delimited list of boards to rebuild'
+        description: 'Comma delimited list'
         required: true
         default: 'bananapi'
-      tags:
+      version:
+        description: 'V'
+        required: false
 
 jobs:
 
@@ -50,20 +53,23 @@ jobs:
         - name: Build beta images
           env:
             GPG_PASS: ${{ secrets.PASSPHRASE }}
+            REBUILD_IMAGES: ${{ github.event.inputs.boards }}
           run: |
 
             cd build
-
-            # use prepared configs
-            sudo cp ../scripts/configs/* userpatches/
 
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/4000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
 
+            # use prepared configs
+            sudo cp ../scripts/configs/* userpatches/
+
             # cleaning leftovers if any
             rm -rf output/images/*
             rm -f userpatches/targets.conf
+
+            echo "Log level: ${{ github.event.inputs.boards }}"
 
             REBUILD_IMAGES="rockpi-s"
             BETA="no"
