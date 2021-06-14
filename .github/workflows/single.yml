@@ -16,7 +16,7 @@ jobs:
 
     prepare:
 
-      name: Download sources
+      name: Stable image(s) and repository update
       runs-on: [self-hosted, Linux, X64]
       steps:
 
@@ -68,7 +68,7 @@ jobs:
             sudo cp ../scripts/VERSION .
 
             # cleaning leftovers if any
-            rm -rf output/images/*
+            rm -rf output/images/* output/debs/*
             rm -f userpatches/targets.conf
 
             ./compile.sh single IGNORE_HASH="yes" REBUILD_IMAGES="${REBUILD_IMAGES}" KERNEL_ONLY="yes" BETA="no" BUILD_ALL="yes" BSP_BUILD="yes" MAKE_ALL_BETA="yes"
@@ -83,7 +83,7 @@ jobs:
             cd build
             sudo rm -f .tmp/bump
             if [[ $(cat .tmp/n 2> /dev/null) -ne 0 ]]; then
-              ./compile.sh all-new-beta-bsp
+              ./compile.sh all-new-stable-bsp
               sudo touch .tmp/bump
             fi
 
