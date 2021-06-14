@@ -183,8 +183,9 @@ jobs:
           echo "o"
 
     finish:
+
       name: Cleaning
-      needs: [torrents,repository]
+      needs: [torrents, repository]
       runs-on: [self-hosted, Linux]
       steps:
         - name: Run script
