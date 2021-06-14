@@ -98,7 +98,8 @@ jobs:
 
         - name: Make BSP packages
 
-          if: ${{ success() }} && github.event.inputs.repository != 'yes'
+          if: ${{ success() }}
+          if: github.event.inputs.repository != 'yes'
 
           run: |
 
