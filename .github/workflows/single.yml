@@ -169,9 +169,22 @@ jobs:
         - name: Create torrents
           run: ssh -i ~/.ssh/id_torrent ${{ secrets.USER_TORRENT }}@${{ secrets.SSH_HOST }}
 
+    repository:
+
+      name: Update package repository
+      needs: [prepare]
+      if: ${{ github.event.inputs.repository != 'yes' }}
+      runs-on: [self-hosted, Linux]
+
+      steps:
+
+        - name: test
+          run: |
+          echo "o"
+
     finish:
       name: Cleaning
-      needs: [torrents]
+      needs: [torrents,repository]
       runs-on: [self-hosted, Linux]
       steps:
         - name: Run script
