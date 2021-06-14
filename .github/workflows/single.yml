@@ -126,7 +126,7 @@ jobs:
     finish:
       name: Cleaning
       needs: [torrents]
-      runs-on: [self-hosted, Linux, big]
+      runs-on: [self-hosted, Linux]
       steps:
         - name: Run script
           shell: bash {0}
