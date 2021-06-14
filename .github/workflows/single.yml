@@ -77,9 +77,6 @@ jobs:
 
             cd build
            
-            echo "IMa $REBUILD_IMAGES"
-            echo "Rep $REPOSITORY"
-
             [[ "${REPOSITORY}" == "yes" ]] && REPOSITORY_INSTALL="u-boot,kernel,armbian-config,armbian-zsh,armbian-firmware"
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
@@ -139,6 +136,8 @@ jobs:
             if_key_exists: replace
 
         - name: Deploy to server
+          env:
+            REPOSITORY:      ${{ github.event.inputs.repository }}
           if: ${{ success() }}
           run: |
 
