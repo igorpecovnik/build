@@ -121,6 +121,8 @@ jobs:
             VERSION=$(cat VERSION | cut -d. -f1,2)
             PATCH=$(cat VERSION | cut -d. -f3,3)
             echo $VERSION"."$(($PATCH + 1)) | tee VERSION
+            git config --global user.email "info@armbian.com"
+            git config --global user.name "Armbianworker"
             git pull
             git add VERSION
             git commit -m "Bump stable version"
