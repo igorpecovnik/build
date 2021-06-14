@@ -11,7 +11,7 @@ on:
       repository:
         description: 'Packages from repository'
         required: true
-        default: 'false'
+        default: 'true'
 
 jobs:
 
@@ -72,7 +72,7 @@ jobs:
           run: |
 
             cd build
-            [[ "${REPOSITORY}" == "false" ]] && REPOSITORY_INSTALL="u-boot,kernel,armbian-config,armbian-zsh,armbian-firmware"
+            [[ "${REPOSITORY}" == "true" ]] && REPOSITORY_INSTALL="u-boot,kernel,armbian-config,armbian-zsh,armbian-firmware"
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
             ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel" 'prepare_host'
             PARALLEL_BUILDS=$(awk '{printf("%d",$1/8000)}' <<<$(($(LC_ALL=C free -w 2>/dev/null | grep "^Mem" | awk '{print $2}' || LC_ALL=C free | grep "^Mem"| awk '{print $2}')/1024)))
@@ -87,7 +87,7 @@ jobs:
             rm -rf output/images/* output/debs/*
             rm -f userpatches/targets.conf
 
-            ./compile.sh single IGNORE_HASH="yes" REPOSITORY_INSTALL="${REPOSITORY_INSTALL}" REBUILD_IMAGES="${REBUILD_IMAGES}" KERNEL_ONLY="yes" BETA="no" BUILD_ALL="yes" BSP_BUILD="yes" MAKE_ALL_BETA="yes"
+            [[ "${REPOSITORY}" == "false" ]] && ./compile.sh single IGNORE_HASH="yes" REPOSITORY_INSTALL="${REPOSITORY_INSTALL}" REBUILD_IMAGES="${REBUILD_IMAGES}" KERNEL_ONLY="yes" BETA="no" BUILD_ALL="yes" BSP_BUILD="yes" MAKE_ALL_BETA="yes"
             ./compile.sh single MULTITHREAD="${PARALLEL_BUILDS}" REPOSITORY_INSTALL="${REPOSITORY_INSTALL}" IGNORE_HASH="yes" IGNORE_UPDATES="yes" REBUILD_IMAGES="${REBUILD_IMAGES}" KERNEL_ONLY="no" BETA="no" BUILD_ALL="yes" GPG_PASS="${GPG_PASS}"
 
         - name: Make BSP packages
