@@ -43,4 +43,13 @@ jobs:
 #            clean: true
 
         - run: |
-            ls -l
+            
+            cd build
+            [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"
+
+        - name: upload artefacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: Created packages
+            path: output/debs/
