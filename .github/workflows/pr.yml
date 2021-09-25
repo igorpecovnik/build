@@ -46,7 +46,7 @@ jobs:
             
             cd build
             [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no"
+            ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" 'prepare_host'
 
         - name: upload artefacts
           uses: actions/upload-artifact@v2
