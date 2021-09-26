@@ -1,4 +1,5 @@
-name: Lets see
+name: Build beta images
+
 on:
   workflow_dispatch:
 
