@@ -1,4 +1,4 @@
-name: Build beta images
+name: Uboo
 
 on:
   workflow_dispatch:
