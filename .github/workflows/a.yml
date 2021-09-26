@@ -37,7 +37,6 @@ jobs:
 
     needs: [ Prepare ]
     runs-on: [self-hosted, Linux, images]
-    if: ${{ github.repository_owner == 'armbian' }}
     timeout-minutes: 480
     strategy:
       fail-fast: false
