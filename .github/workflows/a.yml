@@ -71,6 +71,6 @@ jobs:
           BRANCH=$(echo $CHUNK | cut -d":" -f2)
           cd build
           [[ ! -f .ignore_changes ]] && sudo touch .ignore_changes
-          ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" REPOSITORY_INSTALL="u-boot,kernel" 'prepare_host'
+          ./compile.sh KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" 'prepare_host'
           ./compile.sh BOARD="$BOARD" KERNEL_ONLY="yes" BRANCH="$BRANCH" KERNEL_CONFIGURE="no" OFFLINE="no" 'fetch_from_repo "$BOOTSOURCE" "$BOOTDIR" "$BOOTBRANCH" "yes"' 
           ./compile.sh BOARD="$BOARD" KERNEL_ONLY="yes" BRANCH="$BRANCH" KERNEL_CONFIGURE="no" OFFLINE="no" compile_uboot
