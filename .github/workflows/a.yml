@@ -1,12 +1,10 @@
-name: Uboo
-
+name: Lets see
 on:
   workflow_dispatch:
 
 jobs:
 
   Prepare:
-
     runs-on: ubuntu-20.04
     outputs:
       matrix: ${{steps.list_dirs.outputs.matrix}}
