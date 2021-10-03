@@ -1,20 +1,9 @@
 name: Call a reusable workflow
 
 on:
-  pull_request:
-    branches:
-      - main
 
   workflow_dispatch:
 
 jobs:
   call-workflow:
-    runs-on: ubuntu-latest
-    name: A job
-    steps:
-    - uses: actions/checkout@v2
-    - id: mycompo
-      uses: igorpecovnik/build/.github/workflows/work-b.yml@master
-      with:
-        typeof: 'debs'
-
+    uses: igorpecovnik/build/.github/workflows/main.yml@master
