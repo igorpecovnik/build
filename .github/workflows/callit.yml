@@ -7,10 +7,10 @@ on:
 
 jobs:
   call-workflow:
-    uses: igorpecovnik/build/.github/workflows/work-B.yml@master
+    uses: igorpecovnik/build/.github/workflows/work-b.yml@master
 
   call-workflow-passing-data:
-    uses: igorpecovnik/build/.github/workflows/work-B.yml@master
+    uses: igorpecovnik/build/.github/workflows/work-b.yml@master
     with:
       username: mona
     secrets:
