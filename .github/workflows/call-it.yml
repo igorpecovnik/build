@@ -15,5 +15,3 @@ jobs:
     uses: igorpecovnik/build/.github/workflows/work-b.yml@master
     with:
       username: mon
-    secrets:
-      token: ${{ secrets.TOKEN }}
