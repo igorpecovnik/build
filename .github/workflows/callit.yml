@@ -1,0 +1,17 @@
+name: Call a reusable workflow
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  call-workflow:
+    uses: igorpecovnik/build/.github/workflows/work-B.yml@master
+
+  call-workflow-passing-data:
+    uses: igorpecovnik/build/.github/workflows/work-B.yml@master
+    with:
+      username: mona
+    secrets:
+      token: ${{ secrets.TOKEN }}
