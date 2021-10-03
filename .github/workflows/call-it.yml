@@ -14,8 +14,7 @@ jobs:
     name: Edge
     uses: igorpecovnik/build/.github/workflows/igor.yml@master
     with:
-      username: liza
+      username: edge
 
-finish:
 
-  needs: [call-workflow,call-workflow-passing-data]
+  
