@@ -12,5 +12,9 @@ jobs:
         uses: igorpecovnik/actions@v1
         with:
           who-to-greet: 'Mona the Octocat'
+      - id: jeb
+        uses: igorpecovnik/actions@v1
+        with:
+          who-to-greet: 'Lojze'
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash
