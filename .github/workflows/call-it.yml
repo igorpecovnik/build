@@ -9,9 +9,12 @@ on:
 
 jobs:
   call-workflow:
-    uses: igorpecovnik/build/.github/workflows/work-b.yml@master
+    runs-on: ubuntu-latest
+    name: A job
+    steps:
+    - uses: actions/checkout@v2
+    - id: mycompo
+      uses: igorpecovnik/build/.github/workflows/work-b.yml@master
+      with:
+        typeof: 'debs'
 
-  call-workflow-passing-data:
-    uses: igorpecovnik/build/.github/workflows/work-b.yml@master
-    with:
-      username: mon
