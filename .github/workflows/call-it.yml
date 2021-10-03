@@ -5,11 +5,10 @@ on:
   workflow_dispatch:
 
 jobs:
+
   call-workflow:
-  call-workflow-passing-data:
     uses: igorpecovnik/build/.github/workflows/main.yml@master
-    with:
-      username: mona
+
   call-workflow-passing-data:
     uses: igorpecovnik/build/.github/workflows/main.yml@master
     with:
