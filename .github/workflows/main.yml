@@ -18,3 +18,14 @@ jobs:
           who-to-greet: 'Lojze'
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash
+  hello_world:
+    runs-on: ubuntu-latest
+    name: Also a job
+    steps:
+      - uses: actions/checkout@v2
+      - id: jeb
+        uses: igorpecovnik/actions@v1
+        with:
+          who-to-greet: 'Lojze'
+      - run: echo random-number ${{ steps.foo.outputs.random-number }}
+        shell: bash
