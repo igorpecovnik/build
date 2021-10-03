@@ -1,0 +1,15 @@
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: false
+        type: string
+  workflow_dispatch:
+
+jobs:
+  hello_world:
+    runs-on: ubuntu-latest
+    name: Also a job
+    steps:
+      - run: echo random-number ${{ github.event.inputs.username }}
+        shell: bash
