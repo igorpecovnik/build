@@ -16,3 +16,6 @@ jobs:
     with:
       username: liza
 
+finish:
+
+  needs: [call-workflow,call-workflow-passing-data]
