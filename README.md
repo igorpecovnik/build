@@ -7,7 +7,7 @@ build tools</h3>
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/armbian/build/Build)](https://github.com/armbian/build/actions?query=workflow%3ABuild)
 [![Twitter Follow](https://img.shields.io/twitter/follow/armbian?style=flat-square)](https://twitter.com/intent/follow?screen_name=armbian)
 
-## Table of contents
+## Table of contents #
 
 - [What this project does?](#what-this-project-does)
 - [What do you need to get started?](#what-do-you-need-to-get-started)
