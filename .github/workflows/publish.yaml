@@ -15,9 +15,11 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.CR_PAT }}
-
-    - name: Build the hello-world Docker image
+    - name: Build Docker image
       run: |
-        docker build . --tag ghcr.io/jonashackt/hello-world:latest
-        docker run ghcr.io/jonashackt/hello-world:latest
-        docker push ghcr.io/jonashackt/hello-world:latest
+       sed -i "s/-it --rm/-i --rm/" config/templates/config-docker.conf
+       touch .ignore_changes
+       ./compile.sh docker KERNEL_ONLY="yes" BOARD="bananapi" BRANCH="current" KERNEL_CONFIGURE="no" USE_TORRENT="yes" REPOSITORY_INSTALL="kernel"
+       docker tag armbian:$(cat VERSION) armbian/build:latest
+    - name: Push Docker image
+      run: docker push ghcr.io/igorpecovnik/build:latest
