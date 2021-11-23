@@ -11,9 +11,6 @@ jobs:
       BRANCH:  ${{ matrix.branch }}
 
   steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v2
-
     - name: Build
       run: |
         echo "$BRANCH"
