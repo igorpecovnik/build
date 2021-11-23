@@ -7,7 +7,8 @@ jobs:
         branch: [current,edge]
     runs-on: ubuntu-latest
     env:
-      JDK_VERSION:  ${{ matrix.jdk }}
+      RELEASE:  ${{ matrix.release }}
+      BRANCH:  ${{ matrix.branch }}
 
   steps:
     - name: Checkout Repo
@@ -15,4 +16,5 @@ jobs:
 
     - name: Build
       run: |
-      echo "${{ matrix.release }} ${{ matrix.branch }}"
+        echo "$BRANCH"
+        echo "$RELEASE"
