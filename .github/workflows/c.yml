@@ -19,5 +19,5 @@ jobs:
         BRANCH:  ${{ matrix.branch }}
     - name: Build
       run: |
-        echo "$BRANCH"
+        echo ${{ matrix.release }}
         echo "$RELEASE"
