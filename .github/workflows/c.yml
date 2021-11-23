@@ -1,3 +1,8 @@
+name: Pre Merge Checks
+
+on:
+  workflow_dispatch:
+
 jobs:
   gradle:
     strategy:
@@ -6,11 +11,12 @@ jobs:
         release: [focal,buster]
         branch: [current,edge]
     runs-on: ubuntu-latest
-    env:
-      RELEASE:  ${{ matrix.release }}
-      BRANCH:  ${{ matrix.branch }}
-
-  steps:
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+      env:
+        RELEASE:  ${{ matrix.release }}
+        BRANCH:  ${{ matrix.branch }}
     - name: Build
       run: |
         echo "$BRANCH"
