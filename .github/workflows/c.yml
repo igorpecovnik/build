@@ -1,0 +1,18 @@
+jobs:
+  gradle:
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [focal,buster]
+        branch: [current,edge]
+    runs-on: ubuntu-latest
+    env:
+      JDK_VERSION:  ${{ matrix.jdk }}
+
+  steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: |
+      echo "${{ matrix.release }} ${{ matrix.branch }}"
