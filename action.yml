@@ -7,6 +7,10 @@ inputs:
     description: "Select build target: armbian / kernel"
     required: false
     default: "armbian"
+  build_branch:
+    description: "Build branch"
+    required: false
+    default: "main"
   # Images
   armbian_board:
     description: "Set device Board."
@@ -32,7 +36,14 @@ runs:
     - shell: bash
       run: |
         cd ${GITHUB_ACTION_PATH}
-        ls -l
+        ./compile.sh ${{ inputs.build_target }} \
+        BOARD=uefi-x86 \
+        BRANCH=current \
+        RELEASE=jammy \
+        KERNEL_CONFIGURE=no \
+        BUILD_DESKTOP=no \
+        BUILD_MINIMAL=yes
+        echo ": ->  ${{ inputs.build_target }} ${{ inputs.build_branch }} ${{ inputs.armbian_board }}"
 
 branding:
   icon: "terminal"
