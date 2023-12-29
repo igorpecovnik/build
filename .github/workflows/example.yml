@@ -1,0 +1,65 @@
+name: "Build generic Armbian X86 SDK"
+on:
+  workflow_dispatch:
+    inputs:
+      armbian_upload:
+        type: choice
+        default: releases
+        description: 'Where to upload?'
+        required: false
+        options:
+        - workflow
+        - releases
+
+
+jobs:
+
+  build:
+    name: "Build generic Armbian X86 SDK"
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: "Checkout userpatches repo: armbian/os"
+        uses: actions/checkout@v4
+        with:
+          repository: armbian/os
+          fetch-depth: 0
+          clean: false
+          path: os
+
+      - name: Read version
+        run: |
+
+          cat os/stable.json | jq '.version' | sed "s/\"//g" | sed 's/^/VERSION_OVERRIDE=/' >> $GITHUB_ENV
+
+      - name: "Build generic Armbian X86 SDK"
+        uses: igorpecovnik/build@main
+        with:
+          armbian_target:    "image"            # repace with `kernel` if you only want to build artifacts
+          armbian_branch:    "current"          # branch: legacy, current, edge, etc.
+          armbian_release:   "jammy"            # userspace: jammy, bookworm, trixie, etc.
+          armbian_ui:        "minimal"          # minimal, server, xfce, gnome, etc.
+          armbian_compress:  "sha,img,xz"       # compression method: sha,img,xz
+          armbian_version: "${{ env.VERSION_OVERRIDE }}"
+          armbian_board:     "uefi-x86"         # build target from https://github.com/armbian/build/tree/main/config/boards
+
+      #- name: "Upload to workflow artifacts"
+      #  if: ${{ inputs.armbian_upload == 'workflow' }}
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: armbian-artifacts
+      #    path: ${{ env.ARMBIAN_SCRIPT_PATH }}
+
+      - uses: ncipollo/release-action@v1
+        #if: ${{ inputs.armbian_upload == 'releases' }}
+        with:
+          tag: "sdk"
+          name: "Armbian SDK"
+          artifacts: "${{ env.ARMBIAN_SCRIPT_PATH }}/output/images/*"
+          allowUpdates: true
+          removeArtifacts: true
+          replacesArtifacts: true
+          makeLatest: true
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          body: |
+            Unofficial Armbian artifacts with [official tools](https://github.com/armbian/build)
