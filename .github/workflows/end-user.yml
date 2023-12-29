@@ -170,6 +170,10 @@ on:
         description: 'Version override. Leave empty for automatic bump'
         required: false
         default: ''
+      build_runner:
+        description: 'GH runner'
+        required: false
+        default: 'ubuntu-latest'
 
 env:
 
@@ -208,8 +212,6 @@ concurrency:
 jobs:
 
   build:
-
-    name: "M"
     runs-on: ${{ inputs.BUILD_RUNNER }}
     steps:
 
