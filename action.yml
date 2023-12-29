@@ -6,7 +6,11 @@ inputs:
   build_target:
     description: "Select build target: armbian / kernel"
     required: false
-    default: "armbian"
+    default: "kernel"
+  build_branch:
+    description: "Build kernel branch"
+    required: false
+    default: "current"
   # Images
   armbian_board:
     description: "Set device Board."
@@ -31,8 +35,22 @@ runs:
   steps:
     - shell: bash
       run: |
+
+        # translations for easier handling
+        BUILD_TARGET="${{ inputs.build_target }}"
+        [[ "${{ inputs.build_target }}" == image ]] && unset BUILD_TARGET
+
         cd ${GITHUB_ACTION_PATH}
-        ls -l
+        ./compile.sh "${BUILD_TARGET}" \
+        BOARD=${{ inputs.armbian_board }} \
+        BRANCH=${{ inputs.build_branch }} \
+        RELEASE=jammy \
+        KERNEL_CONFIGURE=no \
+        BUILD_DESKTOP=no \
+        BUILD_MINIMAL=yes
+        echo ": ->  ${{ inputs.build_target }} ${{ inputs.build_branch }} ${{ inputs.armbian_board }}"
+
+        echo "ARMBIAN_SCRIPT_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV
 
 branding:
   icon: "terminal"

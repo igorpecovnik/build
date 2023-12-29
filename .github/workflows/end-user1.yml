@@ -2,21 +2,23 @@ name: "Build images XXX"
 on:
   workflow_dispatch:
     inputs:
-      skipImages:
-        description: 'Skip building images? no = build images, yes = skip images'
-        required: true
-        options: [ 'yes', 'no' ]
+      build_target:
         type: choice
-        default: 'no'
-      branch:
+        description: 'Build'
+        required: false
+        options:
+        - kernel
+        - image
+      build_branch:
         type: choice
         description: 'Framework build branch'
         options:
         # branches
-        - main
-        - v23.11
-        default: 'main'
-      board:
+        - legacy
+        - current
+        - edge
+        default: 'current'
+      armbian_board:
         type: choice
         description: 'Board'
         options:
@@ -77,29 +79,11 @@ on:
         - uefi-arm64
         - uefi-x86
         - xiaomi-elish
-        - all
-        default: 'all'
-      targetsFilterInclude:
-        description: 'TARGETS_FILTER_INCLUDE, example: "BOARD:odroidhc4,BOARD:odroidn2"'
-        required: false
-        default: ''
-        type: string
-      nightlybuild:
-        description: 'yes = nighlty, no = stable'
-        required: false
-        options: [ 'yes', 'no' ]
-        type: choice
-        default: 'no'
-      uploadtoserver:
-        description: 'CDN upload  github = releases, armbian = rsync.armbian.com'
-        required: false
-        options: [ 'github', 'armbian', 'both' ]
-        type: choice
-        default: 'armbian'
+        default: 'uefi-x86'
       versionOverride:
-        description: 'Version override. Leave empty for automatic bump'
+        description: 'Version'
         required: false
-        default: ''
+        default: '23.11.1'
       build_runner:
         description: 'GH runner'
         required: false
@@ -151,19 +135,34 @@ jobs:
           sudo apt update
           sudo apt -y clean
 
-      - name: Free Github Runner
-        if: inputs.BUILD_RUNNER == 'ubuntu-latest'
-        uses: descriptinc/free-disk-space@main
-        with:
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+      #- name: Free Github Runner
+      #  if: inputs.BUILD_RUNNER == 'ubuntu-latest'
+      #  uses: descriptinc/free-disk-space@main
+      #  with:
+      #    android: true
+      #    dotnet: true
+      #    haskell: true
+      #    large-packages: true
+      #    docker-images: true
+      #    swap-storage: true
 
       - name: Compile the kernel
         uses: igorpecovnik/build@main
         with:
-          build_target: kernel
-          kernel_source: ${{ inputs.kernel_source }}
+          build_target:  ${{ inputs.build_target }}
+          build_branch:  ${{ inputs.build_branch }}
+          armbian_board: ${{ inputs.armbian_board }}
+
+      - name: Check
+        run: |
+          echo ${{ env.ARMBIAN_SCRIPT_PATH }}
+
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: "${{ inputs.build_target }}"
+          artifacts: "${{ env.ARMBIAN_SCRIPT_PATH }}/output/images/Armbian_*.*,${{ env.ARMBIAN_SCRIPT_PATH }}/output/debs/*"
+          omitBody: true
+          omitName: true
+          allowUpdates: false
+          makeLatest: true
+          token: "${{ secrets.GITHUB_TOKEN }}"
