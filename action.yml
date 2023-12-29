@@ -1,0 +1,39 @@
+name: "Rebuild Armbian"
+author: "https://github.com/armbian"
+description: "Build custom Linux for custom hardware"
+inputs:
+  # Select build target
+  build_target:
+    description: "Select build target: armbian / kernel"
+    required: false
+    default: "armbian"
+  # Images
+  armbian_board:
+    description: "Set device Board."
+    required: false
+    default: "all"
+  armbian_fstype:
+    description: "Set armbian rootfs type: ext4 / btrfs"
+    required: false
+    default: "ext4"
+  builder_name:
+    description: "Set Armbian builder signature."
+    required: false
+    default: ""
+  # Kernel
+  kernel_branch:
+    description: "Set the tags of the stable kernel."
+    required: false
+    default: "stable"
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        cd ${GITHUB_ACTION_PATH}
+        ls -l
+
+branding:
+  icon: "terminal"
+  color: "gray-dark"
