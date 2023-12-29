@@ -185,7 +185,7 @@ env:
   # Github repository for releases. Normally its the one where we executing script
   RELEASE_REPOSITORY: "os"
 
-  # Armbian envs. Adjust to your needs.
+  # Armbian envs. Adjust to your needs
   # This makes builds faster, but only if the Docker images are up-to-date with all dependencies, Python, tools, etc. Otherwise it makes it... slower.
   DOCKER_SKIP_UPDATE: "yes" # Do not apt update/install/requirements/etc during Dockerfile build, trust that images are up-to-date.
 
