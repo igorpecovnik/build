@@ -23,14 +23,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check for present label
-        id: has-label
-        uses: egmacke/action-check-label@v1
-        with:
-          label: "Ready to merge"
+      - name: Check for label using GH CLI
+        id: check
+        run: |
+          gh pr view ${{ github.event.pull_request.number }} --json labels -q '.labels[].name' | grep -q 'Ready to merge' && echo "has_label=true" >> $GITHUB_OUTPUT || echo "has_label=false" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Remove "Ready to merge" label
-        if: steps.has-label.outputs.has-label == 'true'
+        if: steps.check.outputs.has-label == 'true'
         uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
