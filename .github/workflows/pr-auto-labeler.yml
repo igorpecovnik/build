@@ -11,12 +11,30 @@ jobs:
     permissions:
       contents: read # for pascalgn/size-label-action to determine modified files
       pull-requests: write # for pascalgn/size-label-action to add labels to PRs
+      issues: write # for PauMAVA/add-remove-label-action to add/remove labels
+
     name: "Remove Ready to merge"
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
     runs-on: ubuntu-latest
 
     steps:
-      - uses: PauMAVA/add-remove-label-action@v1.0.3
+      - name: Check if "Ready to merge" label exists
+        id: check-label
+        run: |
+          LABEL_FOUND=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }} \
+            | jq '.labels[].name' | grep -c '"Ready to merge"')
+
+          echo "Label found count: $LABEL_FOUND"
+          if [ "$LABEL_FOUND" -gt 0 ]; then
+            echo "has_label=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_label=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Remove "Ready to merge" label
+        if: steps.check-label.outputs.has_label == 'true'
+        uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           add: ""
@@ -26,6 +44,7 @@ jobs:
     permissions:
       contents: read # for actions/labeler to determine modified files
       pull-requests: write # for actions/labeler to add labels to PRs
+      issues: write # for PauMAVA/add-remove-label-action to add/remove labels
 
     name: "Category labels"
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
@@ -41,6 +60,7 @@ jobs:
     permissions:
       contents: read # for pascalgn/size-label-action to determine modified files
       pull-requests: write # for pascalgn/size-label-action to add labels to PRs
+      issues: write # for PauMAVA/add-remove-label-action to add/remove labels
 
     name: "Size label"
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
@@ -58,3 +78,44 @@ jobs:
               "50": "medium",
               "250": "large"
             }
+
+  label-by-date:
+    name: "Label by Date (Quarter)"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # needed to add labels
+
+    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+
+    steps:
+      - name: Label PR based on creation quarter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_CREATED_AT: ${{ github.event.pull_request.created_at }}
+          ISSUE_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "PR created at: $PR_CREATED_AT"
+
+          # Get the numeric month (e.g., 04 for April)
+          MONTH=$(date -d "$PR_CREATED_AT" +%m | sed 's/^0*//')
+          echo "Month extracted: $MONTH"
+
+          # Determine quarter-end label
+          if [ "$MONTH" -le 2 ] || [ "$MONTH" -eq 12 ]; then
+            LABEL="02"
+          elif [ "$MONTH" -le 5 ]; then
+            LABEL="05"
+          elif [ "$MONTH" -le 8 ]; then
+            LABEL="08"
+          else
+            LABEL="11"
+          fi
+
+          echo "Label to apply: $LABEL"
+
+          # Auth and apply label using GitHub CLI
+          echo "$GITHUB_TOKEN" | gh auth login --with-token
+          gh label list --repo "$REPO" | grep -q "^$LABEL" || gh label create "$LABEL" --color "#ededed" --repo "$REPO"
+          gh issue edit "$ISSUE_NUMBER" --add-label "$LABEL" --repo "$REPO"
