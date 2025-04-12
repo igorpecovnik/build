@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="#build-framework">xxx
+  <a href="#build-framework">yyy
   <img src=".github/armbian-logo.png" alt="Armbian logo" width="144">
   </a><br>
   <strong>Armbian Linux Build Framework</strong><br>
