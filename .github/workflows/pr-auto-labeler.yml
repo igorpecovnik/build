@@ -23,12 +23,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if PR has "Ready to merge" label
+      - name: Check for present label
         id: has-label
-        uses: actions-ecosystem/action-has-label@v1
+        uses: egmacke/action-check-label@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: "Ready to merge"
+          label: "Ready to merge"
           
       - name: Remove "Ready to merge" label
         if: steps.has-label.outputs.has-label == 'true'
