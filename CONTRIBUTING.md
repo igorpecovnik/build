@@ -2,7 +2,7 @@
 
 We would love to have you join the Armbian community! Below summarizes the processes that we follow.
 
-## Reporting issues
+## Reporting issuesds
 
 Before [reporting an issue](https://github.com/armbian/build/issues/new/choose), check our [backlog of open issues](https://github.com/armbian/build/issues) and [pull requests](https://github.com/armbian/build/pulls) to see if someone else has already reported or working on it. If an issues is already open, feel free to add your scenario, or additional information, to the discussion. Or simply "subscribe" to it to be notified when it is updated.
 
