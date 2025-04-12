@@ -18,17 +18,18 @@ permissions:
 
 jobs:
   label-remove:
-    name: "Remove 'Ready to merge' Label"
-    runs-on: ubuntu-latest
+    name: "Remove Ready to merge"
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+    runs-on: ubuntu-latest
 
-    steps:
-      # This step removes the "Ready to merge" label if it's present
-      - name: Remove label if it exists
-        uses: actions-ecosystem/action-remove-labels@v1
+    steps:    
+      - name: Remove "Ready to merge" label
+        if: contains(github.event.issue.labels.*.name, '<Ready to merge>')
+        uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: Ready to merge
+          add: ""
+          remove: "Ready to merge"
 
   label-category:
     name: "Category Labels"
