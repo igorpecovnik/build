@@ -34,7 +34,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Remove "Ready to merge" label
-        if: steps.check.outputs.has-label == 'true'
+        if: steps.check.outputs.has_label == 'true'
         uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
