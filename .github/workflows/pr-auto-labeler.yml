@@ -24,7 +24,7 @@ jobs:
 
     steps:    
       - name: Remove "Ready to merge" label
-        if: contains(github.event.issue.labels.*.name, '<Ready to merge>')
+        if: contains(github.event.issue.labels.*.name, 'Ready to merge')
         uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
