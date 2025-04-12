@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout the pull request
+        uses: actions/checkout@v4
+
       - name: Check for label using GH CLI
         id: check
         run: |
