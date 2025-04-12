@@ -1,50 +1,58 @@
 name: Automatic Pull Request Labeling
+
+# Sets labels automatically based on:
+# - PR size (job: label-size)
+# - File categories using .github/labeler config (job: label-category)
+# - PR creation date for quarterly tracking (job: label-by-date)
+# - Removes "Ready to merge" label on PR update (job: label-remove)
+
 run-name: 'Set labels - PR #${{ github.event.pull_request.number }} ("${{ github.event.pull_request.title }}")'
-#
-# Set labels for pull requests automatically based on size (modified via job 'label-size') and file categories (modified via .github/labeler)
-#
 
 on: pull_request_target
 
+# Grant required permissions globally
 permissions:
-  contents: read # for pascalgn/size-label-action to determine modified files
-  pull-requests: write # for pascalgn/size-label-action to add labels to PRs
-  issues: write # for PauMAVA/add-remove-label-action to add/remove labels
+  contents: read          # Required for checking changed files
+  pull-requests: write    # Required for labeling PRs
+  issues: write           # Required for adding/removing labels
 
 jobs:
   label-remove:
-    name: "Remove Ready to merge"
-    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+    name: "Remove 'Ready to merge' Label"
     runs-on: ubuntu-latest
-
-    steps:    
-      - name: Remove "Ready to merge" label
-        if: contains(github.event.issue.labels.*.name, '<Ready to merge>')
-        uses: PauMAVA/add-remove-label-action@v1.0.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          add: ""
-          remove: "Ready to merge"
-
-  label-category:
-    name: "Category labels"
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
-    runs-on: ubuntu-latest
 
     steps:
+      # This step removes the "Ready to merge" label if it's present
+      - name: Remove label if it exists
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: Ready to merge
+
+  label-category:
+    name: "Category Labels"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+
+    steps:
+      # Checks out the repository to read files for matching with labeler config
       - uses: actions/checkout@v4
+
+      # Applies labels based on the .github/labeler.yml config
       - uses: actions/labeler@v5
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
 
   label-size:
-    name: "Size label"
-    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+    name: "Size Label"
     runs-on: ubuntu-latest
+    if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
 
     steps:
-      - name: size-label
-        uses: "pascalgn/size-label-action@v0.5.5"
+      # Automatically adds size labels based on total changed lines
+      - name: Label by size
+        uses: pascalgn/size-label-action@v0.5.5
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
@@ -56,24 +64,23 @@ jobs:
             }
 
   label-by-date:
-    name: "Label by Date (Quarter)"
+    name: "Date label (Quarters)"
     runs-on: ubuntu-latest
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
+
     steps:
-      - name: Label PR based on creation quarter
+      # Determines the label (02, 05, 08, 11) based on PR creation month
+      - name: Determine quarter label
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_CREATED_AT: ${{ github.event.pull_request.created_at }}
-          ISSUE_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
         run: |
           echo "PR created at: $PR_CREATED_AT"
 
-          # Get the numeric month (e.g., 04 for April)
+          # Extract the numeric month (e.g., 04 for April)
           MONTH=$(date -d "$PR_CREATED_AT" +%m | sed 's/^0*//')
           echo "Month extracted: $MONTH"
 
-          # Determine quarter-end label
+          # Determine quarter-end label based on month
           if [ "$MONTH" -le 2 ] || [ "$MONTH" -eq 12 ]; then
             LABEL="02"
           elif [ "$MONTH" -le 5 ]; then
@@ -84,9 +91,11 @@ jobs:
             LABEL="11"
           fi
 
+          # Set as environment variable for next step
           echo "LABEL=${LABEL}" >> $GITHUB_ENV
-          
-      - name: "Set date label"
+
+      # Adds the quarter label to the PR
+      - name: Add quarter label
         uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
