@@ -22,9 +22,16 @@ jobs:
     if: ${{ github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize' }}
     runs-on: ubuntu-latest
 
-    steps:    
+    steps:
+      - name: Check if PR has "Ready to merge" label
+        id: has-label
+        uses: actions-ecosystem/action-has-label@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: "Ready to merge"
+          
       - name: Remove "Ready to merge" label
-        if: contains(github.event.issue.labels.*.name, 'Ready to merge')
+        if: steps.has-label.outputs.has-label == 'true'
         uses: PauMAVA/add-remove-label-action@v1.0.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
