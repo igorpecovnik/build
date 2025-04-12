@@ -113,9 +113,10 @@ jobs:
             LABEL="11"
           fi
 
-          echo "Label to apply: $LABEL"
-
-          # Auth and apply label using GitHub CLI
-          echo "$GITHUB_TOKEN" | gh auth login --with-token
-          gh label list --repo "$REPO" | grep -q "^$LABEL" || gh label create "$LABEL" --color "#ededed" --repo "$REPO"
-          gh issue edit "$ISSUE_NUMBER" --add-label "$LABEL" --repo "$REPO"
+          echo "LABEL=${LABEL}" >> $GITHUB_ENV
+          
+      - name: "Set date label"
+        uses: PauMAVA/add-remove-label-action@v1.0.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          add: "${{ env.LABEL }}"
