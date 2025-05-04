@@ -1,4 +1,4 @@
-<p align="center">
+<p align="center">xxx
   <a href="#build-framework">xxx
   <img src=".github/armbian-logo.png" alt="Armbian logo" width="144">
   </a><br>
